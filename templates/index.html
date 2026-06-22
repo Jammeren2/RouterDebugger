@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <title>RouterDebugger</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <button id="burger" class="btn btn-ghost only-mobile" title="Меню">☰</button>
+      🛜 RouterDebugger <span class="muted small">{{ router_url }}</span>
+    </div>
+    <div class="topbar-right">
+      <span id="conn-dot" class="dot" title="связь с роутером"></span>
+      <span class="muted small">{{ user }}</span>
+      <form method="post" action="/logout"><button class="btn btn-ghost">Выйти</button></form>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar"><div class="loader">Загрузка меню…</div></aside>
+    <main id="content" class="content"><div class="loader">Загрузка…</div></main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script>window.RAW_ENABLED = {{ 'true' if raw_enabled else 'false' }};</script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

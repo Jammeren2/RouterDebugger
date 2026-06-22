@@ -1,0 +1,18 @@
+# probe dumps from the router (raw HTML used for reverse-engineering)
+_probe/
+
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# editors
+.idea/
+.vscode/
+
+# dev-only preview config (machine-specific absolute paths)
+.claude/launch.json

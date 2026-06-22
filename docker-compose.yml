@@ -1,0 +1,35 @@
+# Деплой в Coolify: создай ресурс "Docker Compose" из этого репозитория.
+# Домен и TLS Coolify навесит сам (Traefik). Переменные задай в Coolify
+# (раздел Environment Variables) или в файле .env рядом.
+services:
+  routerdebugger:
+    build: .
+    restart: unless-stopped
+    environment:
+      # --- Твой вход в панель (придумай длинные) ---
+      APP_USERNAME: ${APP_USERNAME}
+      APP_PASSWORD: ${APP_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}            # постоянный ключ подписи сессий (32+ байта hex)
+      # --- Доступ сервера к роутеру ---
+      ROUTER_URL: ${ROUTER_URL:-http://192.168.0.1:8080}
+      ROUTER_USERNAME: ${ROUTER_USERNAME:-admin}
+      ROUTER_PASSWORD: ${ROUTER_PASSWORD:-admin}
+      # --- Прочее ---
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      SESSION_MAX_AGE: ${SESSION_MAX_AGE:-28800}
+      RATE_LIMIT_ATTEMPTS: ${RATE_LIMIT_ATTEMPTS:-5}
+      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-300}
+      RATE_LIMIT_LOCKOUT: ${RATE_LIMIT_LOCKOUT:-900}
+      ENABLE_RAW_CONSOLE: ${ENABLE_RAW_CONSOLE:-true}
+    expose:
+      - "8000"
+    # Контейнер должен видеть роутер 192.168.0.1. На том же хосте/LAN это
+    # обычно работает из коробки. Если роутер не пингуется из контейнера,
+    # раскомментируй host-сеть (тогда сервис слушает порт 8000 на хосте):
+    # network_mode: host
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/healthz')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

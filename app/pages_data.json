@@ -1,0 +1,5524 @@
+[
+  {
+    "id": "AccessCtrlAccessRulesRpm",
+    "htm": "AccessCtrlAccessRulesRpm.htm",
+    "section": "Контроль доступа",
+    "title": "Управление правилами доступа в интернет",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "access_rules_data_param",
+    "para_array": "access_rules_page_param",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": -1,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "Имя правила",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Узел (Host)",
+        "index": 4,
+        "kind": "text"
+      },
+      {
+        "label": "Цель (Target)",
+        "index": 5,
+        "kind": "text"
+      },
+      {
+        "label": "Расписание",
+        "index": 6,
+        "kind": "text"
+      },
+      {
+        "label": "Включено",
+        "index": 7,
+        "kind": "bool"
+      }
+    ],
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "fields": [
+      {
+        "name": "enableCtrl",
+        "label": "Включить контроль доступа в интернет",
+        "type": "checkbox",
+        "src": [
+          "access_global_cfg_dyn_array",
+          0
+        ],
+        "checked_value": "1",
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "defRule",
+        "label": "Политика фильтрации по умолчанию",
+        "type": "radio",
+        "src": [
+          "access_global_cfg_dyn_array",
+          1
+        ],
+        "options": [
+          [
+            "1",
+            "Разрешить (пропускать пакеты, заданные включёнными правилами)"
+          ],
+          [
+            "0",
+            "Запретить (блокировать пакеты, заданные включёнными правилами)"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Page": "1"
+    },
+    "add_fields": [
+      {
+        "name": "rule_name",
+        "label": "Имя правила",
+        "type": "text",
+        "src": [
+          "access_rules_adv_dyn_array",
+          0
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "hosts_lists",
+        "label": "Узел (Host)",
+        "type": "select",
+        "src": [
+          "access_rules_adv_dyn_array",
+          1
+        ],
+        "options": [
+          [
+            "255",
+            "(нет списков узлов — сначала создайте список)"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "targets_lists",
+        "label": "Цель (Target)",
+        "type": "select",
+        "src": [
+          "access_rules_adv_dyn_array",
+          2
+        ],
+        "options": [
+          [
+            "255",
+            "Любая цель"
+          ]
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "scheds_lists",
+        "label": "Расписание",
+        "type": "select",
+        "src": [
+          "access_rules_adv_dyn_array",
+          3
+        ],
+        "options": [
+          [
+            "255",
+            "В любое время"
+          ]
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "enable",
+        "label": "Состояние",
+        "type": "select",
+        "src": [
+          "access_rules_adv_dyn_array",
+          4
+        ],
+        "options": [
+          [
+            "0",
+            "Отключено"
+          ],
+          [
+            "1",
+            "Включено"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Changed",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "access_rules_adv_dyn_array",
+          8
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "SelIndex",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "access_rules_adv_dyn_array",
+          9
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "Page",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "access_rules_adv_dyn_array",
+          10
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "1"
+      }
+    ],
+    "add_save_extra": {
+      "Save": "Save"
+    },
+    "notes_internal": "hosts_lists/targets_lists/scheds_lists наполняются динамически из массивов host_list_dyn_array / target_list_dyn_array / sched_list_dyn_array (value=индекс i, label=имя из массива). На текущем роутере списки пусты, поэтому в options только статичные значения. Узел обязателен (255 запрещён в doSubmit). Цель/Расписание по умолчанию 255 (Любая/Любое время)."
+  },
+  {
+    "id": "AccessCtrlAccessTargetsRpm",
+    "htm": "AccessCtrlAccessTargetsRpm.htm",
+    "section": "Контроль доступа",
+    "title": "Цели (Target Settings)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "access_targets_data_param",
+    "para_array": "access_targets_page_param",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": -1,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "Описание цели",
+        "index": 1,
+        "kind": "text"
+      },
+      {
+        "label": "Информация (когда включено)",
+        "index": 2,
+        "kind": "text"
+      },
+      {
+        "label": "Информация (когда выключено)",
+        "index": 3,
+        "kind": "text"
+      }
+    ],
+    "do_all": [
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "target_type",
+        "label": "Режим",
+        "type": "select",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          0
+        ],
+        "options": [
+          [
+            "0",
+            "Доменное имя"
+          ],
+          [
+            "1",
+            "IP-адрес"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "targets_lists_name",
+        "label": "Описание цели",
+        "type": "text",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          1
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "dst_ip_start",
+        "label": "IP-адрес (начало диапазона)",
+        "type": "ip",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          2
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "dst_ip_end",
+        "label": "IP-адрес (конец диапазона)",
+        "type": "ip",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          3
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "dst_port_start",
+        "label": "Целевой порт (начало)",
+        "type": "number",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          5
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "dst_port_end",
+        "label": "Целевой порт (конец)",
+        "type": "number",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          6
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "proto",
+        "label": "Протокол",
+        "type": "select",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          4
+        ],
+        "options": [
+          [
+            "0",
+            "ALL (все)"
+          ],
+          [
+            "1",
+            "TCP"
+          ],
+          [
+            "2",
+            "UDP"
+          ],
+          [
+            "3",
+            "ICMP"
+          ]
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Commonport",
+        "label": "Стандартный порт сервиса",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "0",
+            "--please select--"
+          ],
+          [
+            "1",
+            "DNS (53)"
+          ],
+          [
+            "2",
+            "FTP (21)"
+          ],
+          [
+            "3",
+            "GOPHER (70)"
+          ],
+          [
+            "4",
+            "HTTP (80)"
+          ],
+          [
+            "5",
+            "NNTP (119)"
+          ],
+          [
+            "6",
+            "POP3 (110)"
+          ],
+          [
+            "7",
+            "PPTP (1723)"
+          ],
+          [
+            "8",
+            "SMTP (25)"
+          ],
+          [
+            "9",
+            "SOCK (1080)"
+          ],
+          [
+            "10",
+            "TELNET (23)"
+          ]
+        ],
+        "show_if": [
+          "target_type",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_0",
+        "label": "Доменное имя 1",
+        "type": "text",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          7
+        ],
+        "show_if": [
+          "target_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_1",
+        "label": "Доменное имя 2",
+        "type": "text",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          8
+        ],
+        "show_if": [
+          "target_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_2",
+        "label": "Доменное имя 3",
+        "type": "text",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          9
+        ],
+        "show_if": [
+          "target_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_3",
+        "label": "Доменное имя 4",
+        "type": "text",
+        "src": [
+          "access_targetss_adv_dyn_array",
+          10
+        ],
+        "show_if": [
+          "target_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save",
+      "Changed": "0",
+      "SelIndex": "0",
+      "fromAdd": "0",
+      "Page": "1"
+    },
+    "special_notes": "Список 'Целей' для Контроля доступа; на момент снятия дампа пуст (access_targets_page_param=[1,0,0,4,0,0,0], count=0). Запись имеет stride=4 в access_targets_data_param: [0]=флаг включения, [1]=описание, [2]=информация когда включено, [3]=информация когда выключено. Пагинация: 8 записей на страницу (хардкод, число страниц = access_targets_page_param[4]/8+1), perpage_index поэтому -1. hasmore=para[1] (NextPage активна когда >0). Массовая операция только DelAll (EnAll/Find закомментированы в HTML). Удаление одной записи: ?Del=<i>&Page=N, редактирование: ?Modify=<i>&Page=N. Форма добавления (?Add=Add) рендерит две взаимоисключающие группы полей в зависимости от target_type: при target_type=1 (IP-адрес) активны dst_ip_start/dst_ip_end/proto/dst_port_start/dst_port_end + выпадающий Commonport (его выбор JS-ом проставляет dst_port_start и proto, само поле Commonport не отправляется как значимое); при target_type=0 (Доменное имя) активны url_0..url_3. Сохранение: GET на AccessCtrlAccessTargetsRpm.htm?Save=Save&...&Page=1. Валидация на клиенте: описание 1..24 символов, IP через is_ipaddr, порт через is_port, домен через is_domain. Скрытые поля Changed/SelIndex/fromAdd/Page при добавлении новой записи = 0/0/0/1 (значения из access_targetss_adv_dyn_array[11,12,15,13]). Не меняет IP/логин/пароль роутера, перезагрузка не требуется."
+  },
+  {
+    "id": "AccessCtrlTimeSchedRpm",
+    "htm": "AccessCtrlTimeSchedRpm.htm",
+    "section": "Контроль доступа",
+    "title": "Расписания",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "timeSchedList",
+    "para_array": "timeSchedPara",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": -1,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "Описание расписания",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Пн",
+        "index": 2,
+        "kind": "bool"
+      },
+      {
+        "label": "Вт",
+        "index": 3,
+        "kind": "bool"
+      },
+      {
+        "label": "Ср",
+        "index": 4,
+        "kind": "bool"
+      },
+      {
+        "label": "Чт",
+        "index": 5,
+        "kind": "bool"
+      },
+      {
+        "label": "Пт",
+        "index": 6,
+        "kind": "bool"
+      },
+      {
+        "label": "Сб",
+        "index": 7,
+        "kind": "bool"
+      },
+      {
+        "label": "Вс",
+        "index": 8,
+        "kind": "bool"
+      },
+      {
+        "label": "Каждый день",
+        "index": 1,
+        "kind": "bool"
+      },
+      {
+        "label": "Начало (ЧЧММ)",
+        "index": 10,
+        "kind": "text"
+      },
+      {
+        "label": "Конец (ЧЧММ)",
+        "index": 11,
+        "kind": "text"
+      }
+    ],
+    "do_all": [
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "time_sched_name",
+        "label": "Описание расписания (макс. 24 симв.)",
+        "type": "text",
+        "src": [
+          "timeSchedAdvDynArray",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "day_type",
+        "label": "Дни",
+        "type": "radio",
+        "src": [
+          "timeSchedAdvDynArray",
+          1
+        ],
+        "options": [
+          [
+            "1",
+            "Каждый день"
+          ],
+          [
+            "0",
+            "Выбрать дни"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Mon_select",
+        "label": "Понедельник",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          2
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Tue_select",
+        "label": "Вторник",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          3
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Wed_select",
+        "label": "Среда",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          4
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Thu_select",
+        "label": "Четверг",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          5
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Fri_select",
+        "label": "Пятница",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          6
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Sat_select",
+        "label": "Суббота",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          7
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Sun_select",
+        "label": "Воскресенье",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          8
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": [
+          "day_type",
+          "0"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "all_hours",
+        "label": "Весь день — 24 часа",
+        "type": "checkbox",
+        "src": [
+          "timeSchedAdvDynArray",
+          9
+        ],
+        "options": null,
+        "checked_value": "on",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "time_sched_start_time",
+        "label": "Время начала (ЧЧММ)",
+        "type": "text",
+        "src": [
+          "timeSchedAdvDynArray",
+          10
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "all_hours",
+          ""
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "time_sched_end_time",
+        "label": "Время окончания (ЧЧММ)",
+        "type": "text",
+        "src": [
+          "timeSchedAdvDynArray",
+          11
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "all_hours",
+          ""
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Changed",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "timeSchedAdvDynArray",
+          12
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "SelIndex",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "timeSchedAdvDynArray",
+          13
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "fromAdd",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "timeSchedAdvDynArray",
+          16
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "Page",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "timeSchedAdvDynArray",
+          14
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": "1"
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "AdvScrRpm",
+    "htm": "AdvScrRpm.htm",
+    "section": "Защита",
+    "title": "Расширенная защита (DoS)",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "interval",
+        "label": "Интервал сбора статистики пакетов (5 ~ 60), сек",
+        "type": "select",
+        "src": [
+          "advPara",
+          2
+        ],
+        "options": [
+          [
+            "5",
+            "5"
+          ],
+          [
+            "10",
+            "10"
+          ],
+          [
+            "15",
+            "15"
+          ],
+          [
+            "20",
+            "20"
+          ],
+          [
+            "25",
+            "25"
+          ],
+          [
+            "30",
+            "30"
+          ],
+          [
+            "35",
+            "35"
+          ],
+          [
+            "40",
+            "40"
+          ],
+          [
+            "45",
+            "45"
+          ],
+          [
+            "50",
+            "50"
+          ],
+          [
+            "55",
+            "55"
+          ],
+          [
+            "60",
+            "60"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "dosAttack",
+        "label": "Защита от DoS-атак",
+        "type": "radio",
+        "src": [
+          "advPara",
+          3
+        ],
+        "options": [
+          [
+            "1",
+            "Отключить"
+          ],
+          [
+            "2",
+            "Включить"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "bIcmpFlood",
+        "label": "Включить фильтрацию ICMP-FLOOD атак",
+        "type": "checkbox",
+        "src": [
+          "advPara",
+          4
+        ],
+        "checked_value": "2",
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "usIcmpFlood",
+        "label": "Порог пакетов ICMP-FLOOD (5 ~ 3600), пакетов/с",
+        "type": "number",
+        "src": [
+          "advPara",
+          5
+        ],
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "bUdpFlood",
+        "label": "Включить фильтрацию UDP-FLOOD",
+        "type": "checkbox",
+        "src": [
+          "advPara",
+          6
+        ],
+        "checked_value": "2",
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "usUdpFlood",
+        "label": "Порог пакетов UDP-FLOOD (5 ~ 3600), пакетов/с",
+        "type": "number",
+        "src": [
+          "advPara",
+          7
+        ],
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "bTcpSynFlood",
+        "label": "Включить фильтрацию TCP-SYN-FLOOD атак",
+        "type": "checkbox",
+        "src": [
+          "advPara",
+          8
+        ],
+        "checked_value": "2",
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "usTcpSynFlood",
+        "label": "Порог пакетов TCP-SYN-FLOOD (5 ~ 3600), пакетов/с",
+        "type": "number",
+        "src": [
+          "advPara",
+          9
+        ],
+        "show_if": [
+          "dosAttack",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "ping",
+        "label": "Игнорировать Ping-пакеты с WAN-порта",
+        "type": "checkbox",
+        "src": [
+          "advPara",
+          10
+        ],
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "lanPing",
+        "label": "Запретить Ping-пакеты с LAN-порта",
+        "type": "checkbox",
+        "src": [
+          "advPara",
+          11
+        ],
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "BakNRestoreRpm",
+    "htm": "BakNRestoreRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Резервная копия и восстановление",
+    "kind": "special",
+    "danger": "ВОССТАНОВЛЕНИЕ из файла ПОЛНОСТЬЮ перезаписывает ВСЕ настройки роутера (Wi-Fi SSID/пароль, LAN/WAN/IP, DHCP, DNS, фаервол, проброс портов, маршруты). Загрузка некорректного/чужого файла или обрыв связи во время заливки может сделать роутер недоступным; вероятна потеря связи и автоперезагрузка после обработки файла. Восстановление возможно только из LAN — при доступе с WAN форма заблокирована.",
+    "reboot_note": true,
+    "handler": "backup-restore",
+    "special_notes": "Два независимых механизма на странице. (1) BACKUP (скачивание): кнопка name=Backup type=button, НЕ submit; по onClick делает location.href='config.bin', то есть обычный GET http://192.168.0.1:8080/userRpm/config.bin (относительный путь от /userRpm/), который отдаёт бинарный дамп конфигурации *.bin. (2) RESTORE (заливка): <FORM action=\"/incoming/RouterBakCfgUpload.cfg\" method=\"post\" enctype=\"multipart/form-data\">. Файловый input: name=\"filename\" type=\"file\" (без атрибута value, файл выбирает пользователь). Кнопка отправки: name=\"Restore\" type=\"submit\" value=\"Restore\". Полный URL заливки: POST http://192.168.0.1:8080/incoming/RouterBakCfgUpload.cfg (НЕ /userRpm/), тело multipart/form-data с частью filename=<содержимое .bin>. Клиентская валидация doSubmit(): filename не должен быть пустым (иначе alert) и требуется подтверждение confirm перед отправкой. ЗАЩИТА ОТ WAN: единственный JS-массив на странице — var bakNRestroreInf = new Array(0,0,0); если bakNRestroreInf[0]==0 — filename и Restore включены (доступ из LAN), иначе оба disabled (доступ из WAN, восстановление запрещено). Эта правка от вендора (chengdanhao, 2013-08-08) запрещает импорт конфига с WAN-порта. Автоперезагрузку сама страница не инициирует, но сервер может перезагрузиться после обработки файла; формат backup в данной прошивке — только конфигурация (без загрузчика и учётных данных веб-интерфейса).",
+    "arrays": [
+      "bakNRestroreInf"
+    ]
+  },
+  {
+    "id": "BasicSecurityRpm",
+    "htm": "BasicSecurityRpm.htm",
+    "section": "Защита",
+    "title": "Базовая защита",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "spi",
+        "label": "SPI-фаервол (брандмауэр)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00000001",
+        "bit_shift": 0
+      },
+      {
+        "name": "pptp_passthrough",
+        "label": "PPTP Passthrough (VPN)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00000100",
+        "bit_shift": 8
+      },
+      {
+        "name": "l2tp_passthrough",
+        "label": "L2TP Passthrough (VPN)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00000200",
+        "bit_shift": 9
+      },
+      {
+        "name": "ipsec_passthrough",
+        "label": "IPSec Passthrough (VPN)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00000400",
+        "bit_shift": 10
+      },
+      {
+        "name": "ftp_alg",
+        "label": "FTP ALG (шлюз приложений)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00010000",
+        "bit_shift": 16
+      },
+      {
+        "name": "tftp_alg",
+        "label": "TFTP ALG (шлюз приложений)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00020000",
+        "bit_shift": 17
+      },
+      {
+        "name": "h323_alg",
+        "label": "H323 ALG (шлюз приложений)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00040000",
+        "bit_shift": 18
+      },
+      {
+        "name": "rtsp_alg",
+        "label": "RTSP ALG (шлюз приложений)",
+        "type": "radio",
+        "src": [
+          "secParam",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null,
+        "bit_mask": "0x00080000",
+        "bit_shift": 19
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "save_notes": "ВНИМАНИЕ: страница НЕ отправляет имена полей spi/pptp_passthrough/... по отдельности. doSave() читает 8 радио-чекбоксов через getElementById и собирает ОДНО 32-битное целое и шлёт ТОЛЬКО ?stat=<int>&Save=Save. Формула: stat = spi | (pptp<<8) | (l2tp<<9) | (ipsec<<10) | (ftp<<16) | (tftp<<17) | (h323<<18) | (rtsp<<19), где каждый бит = 1 если соответствующая опция Enable, иначе 0. Текущее состояние читается из secParam[0] (bitfield) через (secParam[0] & mask). Имя массива в HTML: secParam. Action: GET BasicSecurityRpm.htm. Движок ДОЛЖЕН вычислить stat сам, а не слать имена полей.",
+    "save_url_template": "/userRpm/BasicSecurityRpm.htm?stat=<computed_int>&Save=Save"
+  },
+  {
+    "id": "ChangeLoginPwdRpm",
+    "htm": "ChangeLoginPwdRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Пароль роутера (смена логина и пароля)",
+    "kind": "special",
+    "danger": "Меняет логин И пароль администратора роутера. После сохранения старые учётные данные (admin:admin) перестают работать НЕМЕДЛЕННО — все последующие запросы по HTTP Basic Auth обязаны использовать новые. Движок должен обновить сохранённые admin_user/admin_password ДО следующего обращения к роутеру, иначе доступ будет потерян.",
+    "reboot_note": false,
+    "handler": "password-change",
+    "fields": [
+      {
+        "name": "oldname",
+        "label": "Старое имя пользователя",
+        "type": "text",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "oldpassword",
+        "label": "Старый пароль",
+        "type": "password",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "newname",
+        "label": "Новое имя пользователя",
+        "type": "text",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "newpassword",
+        "label": "Новый пароль",
+        "type": "password",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "newpassword2",
+        "label": "Подтверждение нового пароля",
+        "type": "password",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "newpassword",
+          null
+        ],
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Метод: GET. action=\"ChangeLoginPwdRpm.htm\" (полный URL: http://192.168.0.1:8080/userRpm/ChangeLoginPwdRpm.htm). enctype=\"multipart/form-data\", но реально отправляется как обычный GET с параметрами в query-string (файловых input нет). Кнопка сохранения: <input type=submit name=Save value=Save>. Параметры сохранения: oldname, oldpassword, newname, newpassword, newpassword2, Save=Save. Пример: ...?oldname=admin&oldpassword=admin&newname=NEW&newpassword=PASS&newpassword2=PASS&Save=Save. Текущий массив: var LoginPwdInf = new Array(\"admin\",0,0,0); LoginPwdInf[0]=\"admin\" — текущий логин. ВАЖНО: строка предзаполнения document.forms[0].oldname.value = LoginPwdInf[0] на странице ЗАКОММЕНТИРОВАНА (строка 150), поэтому поле oldname НЕ предзаполняется самой страницей — src выставлен в null для всех полей. При желании движок может подставить oldname из LoginPwdInf[0]. Клиентская валидация (doSubmit): все 5 полей обязательны, максимум 15 символов каждое, без пробелов и только печатаемые ASCII (33..126), newpassword должен совпадать с newpassword2. Файлового input нет — это не загрузка/прошивка, а смена учётных данных."
+  },
+  {
+    "id": "DateTimeCfgRpm",
+    "htm": "DateTimeCfgRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Настройка времени",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "timezone",
+        "label": "Часовой пояс",
+        "type": "select",
+        "src": [
+          "timeInf",
+          6
+        ],
+        "options": [
+          [
+            "0",
+            "(GMT-12:00) Эниветок, Кваджалейн"
+          ],
+          [
+            "60",
+            "(GMT-11:00) Мидуэй, Самоа"
+          ],
+          [
+            "120",
+            "(GMT-10:00) Гавайи"
+          ],
+          [
+            "180",
+            "(GMT-09:00) Аляска"
+          ],
+          [
+            "240",
+            "(GMT-08:00) Тихоокеанское время"
+          ],
+          [
+            "300",
+            "(GMT-07:00) Горное время (США, Канада)"
+          ],
+          [
+            "360",
+            "(GMT-06:00) Центральное время (США, Канада)"
+          ],
+          [
+            "420",
+            "(GMT-05:00) Восточное время (США, Канада)"
+          ],
+          [
+            "450",
+            "(GMT-04:30) Каракас"
+          ],
+          [
+            "480",
+            "(GMT-04:00) Атлантическое время (Канада)"
+          ],
+          [
+            "510",
+            "(GMT-03:30) Ньюфаундленд"
+          ],
+          [
+            "540",
+            "(GMT-03:00) Бразилиа, Буэнос-Айрес"
+          ],
+          [
+            "600",
+            "(GMT-02:00) Срединно-Атлантическое"
+          ],
+          [
+            "660",
+            "(GMT-01:00) Азорские о-ва, Кабо-Верде"
+          ],
+          [
+            "720",
+            "(GMT) Гринвич, Дублин, Лондон"
+          ],
+          [
+            "780",
+            "(GMT+01:00) Берлин, Стокгольм, Рим, Берн, Брюссель"
+          ],
+          [
+            "840",
+            "(GMT+02:00) Афины, Хельсинки, Восточная Европа, Израиль"
+          ],
+          [
+            "900",
+            "(GMT+03:00) Багдад, Кувейт, Найроби, Эр-Рияд, Москва"
+          ],
+          [
+            "930",
+            "(GMT+03:30) Тегеран"
+          ],
+          [
+            "960",
+            "(GMT+04:00) Абу-Даби, Маскат, Казань, Волгоград"
+          ],
+          [
+            "990",
+            "(GMT+04:30) Кабул"
+          ],
+          [
+            "1020",
+            "(GMT+05:00) Исламабад, Карачи, Екатеринбург"
+          ],
+          [
+            "1050",
+            "(GMT+05:30) Мадрас, Калькутта, Бомбей, Нью-Дели"
+          ],
+          [
+            "1065",
+            "(GMT+05:45) Катманду"
+          ],
+          [
+            "1080",
+            "(GMT+06:00) Алма-Ата, Дакка"
+          ],
+          [
+            "1110",
+            "(GMT+06:30) Рангун"
+          ],
+          [
+            "1140",
+            "(GMT+07:00) Бангкок, Джакарта, Ханой"
+          ],
+          [
+            "1200",
+            "(GMT+08:00) Пекин, Гонконг, Перт, Сингапур"
+          ],
+          [
+            "1260",
+            "(GMT+09:00) Токио, Осака, Саппоро, Сеул, Якутск"
+          ],
+          [
+            "1290",
+            "(GMT+09:30) Аделаида"
+          ],
+          [
+            "1320",
+            "(GMT+10:00) Брисбен, Канберра, Мельбурн, Сидней"
+          ],
+          [
+            "1380",
+            "(GMT+11:00) Магадан, Соломоновы о-ва, Новая Каледония"
+          ],
+          [
+            "1440",
+            "(GMT+12:00) Фиджи, Камчатка, Окленд"
+          ],
+          [
+            "1500",
+            "(GMT+13:00) Нукуалофа"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "month",
+        "label": "Месяц (MM)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "day",
+        "label": "День (DD)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "year",
+        "label": "Год (YYYY, 1970-2037)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          2
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "hour",
+        "label": "Час (HH, 0-24)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "minute",
+        "label": "Минута (MM, 0-60)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          4
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "second",
+        "label": "Секунда (SS, 0-60)",
+        "type": "number",
+        "src": [
+          "timeInf",
+          5
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "ntpA",
+        "label": "NTP-сервер 1 (IP или домен)",
+        "type": "text",
+        "src": [
+          "timeInf",
+          7
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "ntpB",
+        "label": "NTP-сервер 2 (IP или домен)",
+        "type": "text",
+        "src": [
+          "timeInf",
+          8
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "daylightStatus",
+        "label": "Летнее время",
+        "type": "radio",
+        "src": [
+          "timeInf",
+          17
+        ],
+        "options": [
+          [
+            "0",
+            "Отключить"
+          ],
+          [
+            "1",
+            "Включить на весь год"
+          ],
+          [
+            "2",
+            "Включить в заданное время"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "start_month",
+        "label": "Начало ЛВ: месяц",
+        "type": "select",
+        "src": [
+          "timeInf",
+          9
+        ],
+        "options": [
+          [
+            "0",
+            "Янв"
+          ],
+          [
+            "1",
+            "Фев"
+          ],
+          [
+            "2",
+            "Мар"
+          ],
+          [
+            "3",
+            "Апр"
+          ],
+          [
+            "4",
+            "Май"
+          ],
+          [
+            "5",
+            "Июн"
+          ],
+          [
+            "6",
+            "Июл"
+          ],
+          [
+            "7",
+            "Авг"
+          ],
+          [
+            "8",
+            "Сен"
+          ],
+          [
+            "9",
+            "Окт"
+          ],
+          [
+            "10",
+            "Ноя"
+          ],
+          [
+            "11",
+            "Дек"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "start_count",
+        "label": "Начало ЛВ: неделя",
+        "type": "select",
+        "src": [
+          "timeInf",
+          10
+        ],
+        "options": [
+          [
+            "0",
+            "Первая"
+          ],
+          [
+            "1",
+            "2-я"
+          ],
+          [
+            "2",
+            "3-я"
+          ],
+          [
+            "3",
+            "4-я"
+          ],
+          [
+            "4",
+            "Последняя"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "start_week",
+        "label": "Начало ЛВ: день недели",
+        "type": "select",
+        "src": [
+          "timeInf",
+          11
+        ],
+        "options": [
+          [
+            "1",
+            "Пн"
+          ],
+          [
+            "2",
+            "Вт"
+          ],
+          [
+            "3",
+            "Ср"
+          ],
+          [
+            "4",
+            "Чт"
+          ],
+          [
+            "5",
+            "Пт"
+          ],
+          [
+            "6",
+            "Сб"
+          ],
+          [
+            "0",
+            "Вс"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "start_hour",
+        "label": "Начало ЛВ: час",
+        "type": "select",
+        "src": [
+          "timeInf",
+          12
+        ],
+        "options": [
+          [
+            "0",
+            "0:00"
+          ],
+          [
+            "1",
+            "1:00"
+          ],
+          [
+            "2",
+            "2:00"
+          ],
+          [
+            "3",
+            "3:00"
+          ],
+          [
+            "4",
+            "4:00"
+          ],
+          [
+            "5",
+            "5:00"
+          ],
+          [
+            "6",
+            "6:00"
+          ],
+          [
+            "7",
+            "7:00"
+          ],
+          [
+            "8",
+            "8:00"
+          ],
+          [
+            "9",
+            "9:00"
+          ],
+          [
+            "10",
+            "10:00"
+          ],
+          [
+            "11",
+            "11:00"
+          ],
+          [
+            "12",
+            "12:00"
+          ],
+          [
+            "13",
+            "13:00"
+          ],
+          [
+            "14",
+            "14:00"
+          ],
+          [
+            "15",
+            "15:00"
+          ],
+          [
+            "16",
+            "16:00"
+          ],
+          [
+            "17",
+            "17:00"
+          ],
+          [
+            "18",
+            "18:00"
+          ],
+          [
+            "19",
+            "19:00"
+          ],
+          [
+            "20",
+            "20:00"
+          ],
+          [
+            "21",
+            "21:00"
+          ],
+          [
+            "22",
+            "22:00"
+          ],
+          [
+            "23",
+            "23:00"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "end_month",
+        "label": "Конец ЛВ: месяц",
+        "type": "select",
+        "src": [
+          "timeInf",
+          13
+        ],
+        "options": [
+          [
+            "0",
+            "Янв"
+          ],
+          [
+            "1",
+            "Фев"
+          ],
+          [
+            "2",
+            "Мар"
+          ],
+          [
+            "3",
+            "Апр"
+          ],
+          [
+            "4",
+            "Май"
+          ],
+          [
+            "5",
+            "Июн"
+          ],
+          [
+            "6",
+            "Июл"
+          ],
+          [
+            "7",
+            "Авг"
+          ],
+          [
+            "8",
+            "Сен"
+          ],
+          [
+            "9",
+            "Окт"
+          ],
+          [
+            "10",
+            "Ноя"
+          ],
+          [
+            "11",
+            "Дек"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "end_count",
+        "label": "Конец ЛВ: неделя",
+        "type": "select",
+        "src": [
+          "timeInf",
+          14
+        ],
+        "options": [
+          [
+            "0",
+            "Первая"
+          ],
+          [
+            "1",
+            "2-я"
+          ],
+          [
+            "2",
+            "3-я"
+          ],
+          [
+            "3",
+            "4-я"
+          ],
+          [
+            "4",
+            "Последняя"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "end_week",
+        "label": "Конец ЛВ: день недели",
+        "type": "select",
+        "src": [
+          "timeInf",
+          15
+        ],
+        "options": [
+          [
+            "1",
+            "Пн"
+          ],
+          [
+            "2",
+            "Вт"
+          ],
+          [
+            "3",
+            "Ср"
+          ],
+          [
+            "4",
+            "Чт"
+          ],
+          [
+            "5",
+            "Пт"
+          ],
+          [
+            "6",
+            "Сб"
+          ],
+          [
+            "0",
+            "Вс"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "end_hour",
+        "label": "Конец ЛВ: час",
+        "type": "select",
+        "src": [
+          "timeInf",
+          16
+        ],
+        "options": [
+          [
+            "0",
+            "0:00"
+          ],
+          [
+            "1",
+            "1:00"
+          ],
+          [
+            "2",
+            "2:00"
+          ],
+          [
+            "3",
+            "3:00"
+          ],
+          [
+            "4",
+            "4:00"
+          ],
+          [
+            "5",
+            "5:00"
+          ],
+          [
+            "6",
+            "6:00"
+          ],
+          [
+            "7",
+            "7:00"
+          ],
+          [
+            "8",
+            "8:00"
+          ],
+          [
+            "9",
+            "9:00"
+          ],
+          [
+            "10",
+            "10:00"
+          ],
+          [
+            "11",
+            "11:00"
+          ],
+          [
+            "12",
+            "12:00"
+          ],
+          [
+            "13",
+            "13:00"
+          ],
+          [
+            "14",
+            "14:00"
+          ],
+          [
+            "15",
+            "15:00"
+          ],
+          [
+            "16",
+            "16:00"
+          ],
+          [
+            "17",
+            "17:00"
+          ],
+          [
+            "18",
+            "18:00"
+          ],
+          [
+            "19",
+            "19:00"
+          ],
+          [
+            "20",
+            "20:00"
+          ],
+          [
+            "21",
+            "21:00"
+          ],
+          [
+            "22",
+            "22:00"
+          ],
+          [
+            "23",
+            "23:00"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": [
+          "daylightStatus",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "isTimeChanged",
+        "label": "Флаг изменения времени",
+        "type": "hidden",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "1"
+      },
+      {
+        "name": "isDaylightSavingChanged",
+        "label": "Флаг изменения летнего времени",
+        "type": "hidden",
+        "src": null,
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "1"
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Форма меняет ТОЛЬКО дату/время, часовой пояс, NTP-серверы и летнее время; НЕ трогает IP/логин/пароль роутера и не требует перезагрузки. Метод GET, action=DateTimeCfgRpm.htm, enctype=multipart/form-data. Кнопка 'Get GMT' (name=GetGmtTime) и функция doGetTime() ведут на GetGMTRpm.htm?GetTime=GetTime — синхронизация по NTP, отдельный сценарий. Скрытые поля isTimeChanged/isDaylightSavingChanged движок при изменении должен слать =1 (как делает checkforAction перед Save), иначе роутер может проигнорировать новые значения; в hidden_value заданы '1'. Поля начала/конца летнего времени (start_*/end_*) активны и осмысленны только при daylightStatus=2 (в остальных режимах JS их disable'ит), поэтому помечены show_if. ВНИМАНИЕ: индексы timeInf для DST смещены — timeInf[9..16] это start_month, start_count, start_week, start_hour, end_month, end_count, end_week, end_hour; timeInf[17]=daylightStatus, timeInf[18]=флаг статуса ЛВ (только для отображения). В сэмпле HTML end_hour=timeInf[16]=24 — невалидное значение (диапазон опций 0-23), роутер вернул так."
+  },
+  {
+    "id": "DdnsAddRpm",
+    "htm": "DdnsAddRpm.htm",
+    "section": "Динамический DNS",
+    "title": "Динамический DNS (DDNS)",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "provider",
+        "label": "Поставщик услуги (DDNS-провайдер)",
+        "type": "select",
+        "src": [
+          "serInf",
+          5
+        ],
+        "options": [
+          [
+            "0",
+            "PeanutHull ( www.oray.net )"
+          ],
+          [
+            "1",
+            "Comexe ( www.comexe.cn )"
+          ],
+          [
+            "2",
+            "Dyndns ( www.dyndns.org )"
+          ],
+          [
+            "3",
+            "No-IP ( www.no-ip.com )"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "wan",
+        "label": "WAN-порт",
+        "type": "select",
+        "src": [
+          "serInf",
+          7
+        ],
+        "options": [
+          [
+            "0",
+            "WAN1"
+          ]
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "username",
+        "label": "Имя пользователя (учётная запись DDNS)",
+        "type": "text",
+        "src": [
+          "serInf",
+          0
+        ],
+        "options": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "pwd",
+        "label": "Пароль (учётной записи DDNS)",
+        "type": "password",
+        "src": [
+          "serInf",
+          1
+        ],
+        "options": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "cliUrl",
+        "label": "Доменное имя",
+        "type": "text",
+        "src": [
+          "serInf",
+          2
+        ],
+        "options": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "EnDdns",
+        "label": "Включить DDNS",
+        "type": "checkbox",
+        "src": [
+          "serInf",
+          3
+        ],
+        "options": null,
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Форма действия action=\"DynDdnsRpm.htm\" (метод GET, enctype multipart/form-data). Текущие значения подставляются внизу страницы: username=serInf[0], pwd=serInf[1], cliUrl=serInf[2], EnDdns.checked=serInf[3], provider=serInf[5], EnDdns.value=serInf[6], wan.selectedIndex=serInf[7]. Чекбокс EnDdns имеет value=\"2\" (checked_value). Поле wan (WAN-порт) выводится только при serInf[8]!=1 (несколько WAN); при одном WAN строка скрыта (display:none) — поле опционально, индекс WAN передаётся числом (0-based). Кнопки Login/Logout (submit) проверяют/разрывают соединение; основное сохранение — кнопка Save (name=Save value=Save). onSubmit вызывает doSubmit() с проверкой is_domain(cliUrl). Страница авто-обновляется каждые 6 сек при включённом DDNS. Страница НЕ меняет IP/логин/пароль роутера — настраивает только сопоставление динамического домена, опасности нет."
+  },
+  {
+    "id": "DiagnosticRpm",
+    "htm": "DiagnosticRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Диагностика (Ping / Traceroute)",
+    "kind": "special",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "doType",
+        "label": "Инструмент диагностики",
+        "type": "radio",
+        "src": null,
+        "options": [
+          [
+            "ping",
+            "Ping (проверка связи)"
+          ],
+          [
+            "tracert",
+            "Traceroute (трассировка)"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "pingAddr",
+        "label": "IP-адрес / Доменное имя",
+        "type": "text",
+        "src": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "sendNum",
+        "label": "Количество пакетов Ping (1-50)",
+        "type": "number",
+        "src": null,
+        "show_if": [
+          "doType",
+          "ping"
+        ],
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "pSize",
+        "label": "Размер пакета Ping, байт (4-1472)",
+        "type": "number",
+        "src": null,
+        "show_if": [
+          "doType",
+          "ping"
+        ],
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "overTime",
+        "label": "Таймаут Ping, мс (100-2000)",
+        "type": "number",
+        "src": null,
+        "show_if": [
+          "doType",
+          "ping"
+        ],
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "trHops",
+        "label": "Макс. число переходов Traceroute / TTL (1-30)",
+        "type": "number",
+        "src": null,
+        "show_if": [
+          "doType",
+          "tracert"
+        ],
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "isNew",
+        "label": "",
+        "type": "hidden",
+        "src": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "new"
+      }
+    ],
+    "save_extra": {},
+    "handler": "diagnostic",
+    "special_notes": "Страница НЕ сохраняет настройки роутера и НЕ имеет обычной формы Save. Это асинхронный инструмент диагностики (ping/traceroute). МЕХАНИЗМ ЗАПУСКА: кнопка Start вызывает JS doSub(), который валидирует поля и загружает скрытый IFRAME (name=frame1) по адресу GET /userRpm/PingIframeRpm.htm с query-параметрами. Точный URL запуска: GET http://192.168.0.1:8080/userRpm/PingIframeRpm.htm?ping_addr=<адрес>&doType=<ping|tracert>&isNew=new&sendNum=<n>&pSize=<n>&overTime=<n>&trHops=<n>. ВАЖНО: имя параметра адреса в URL — ping_addr (со снейк-кейсом), а не pingAddr из атрибута name инпута. method=GET, enctype=application/x-www-form-urlencoded, без multipart, без загрузки файлов. Результат стримится обратно в textarea name=result (readonly). ОСТАНОВКА: кнопка Stop вызывает frames['frame1'].printPingTail() и перезагружает iframe с isNew=stop (URL: /userRpm/PingIframeRpm.htm?ping_addr=<адрес>&doType=<тип>&isNew=stop) либо чистый /userRpm/PingIframeRpm.htm. ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ПОЛЕЙ (chooseSwitch): при doType=ping активны sendNum/pSize/overTime, неактивен trHops; при doType=tracert наоборот. ВАЛИДАЦИЯ JS: pingAddr обязателен и проходит is_domain(); sendNum 1-50; pSize 4-1472; overTime 100-2000; trHops 1-30. БЕЗОПАСНОСТЬ: страница НЕ меняет IP/логин/пароль роутера, НЕ делает сброс/прошивку — чисто диагностический read-only инструмент. На странице нет ни одного объявления var X = new Array(, нет предзаполнения полей из массивов (все src=null), значения по умолчанию заданы прямо в атрибутах value инпутов: sendNum=4, pSize=64, overTime=800, trHops=20.",
+    "arrays": []
+  },
+  {
+    "id": "LanArpBindingListRpm",
+    "htm": "LanArpBindingListRpm.htm",
+    "section": "Привязка IP и MAC",
+    "title": "ARP-таблица (список ARP)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "arpClientListDyn",
+    "para_array": "arpClientDyn",
+    "count_index": 0,
+    "stride_index": 1,
+    "perpage_index": -1,
+    "page_index": -1,
+    "hasmore_index": -1,
+    "columns": [
+      {
+        "label": "MAC-адрес",
+        "index": 1,
+        "kind": "mac"
+      },
+      {
+        "label": "IP-адрес",
+        "index": 2,
+        "kind": "ip"
+      },
+      {
+        "label": "Статус",
+        "index": 0,
+        "kind": "status"
+      }
+    ],
+    "do_all": [],
+    "add_fields": [],
+    "save_extra": {},
+    "handler": "",
+    "special_notes": "Это ДИНАМИЧЕСКАЯ ARP-таблица WR740N (отображает обнаруженные устройства), а НЕ редактируемый список привязок. На странице нет формы добавления записи: GET ?Add=Add&Page=1 сервер игнорирует и возвращает ту же страницу (_probe/LanArpBindingListRpm__add.htm побайтово совпадает с _probe/LanArpBindingListRpm.htm). Поэтому add_fields пуст. Записи отдаются массивом arpClientListDyn (плоский, шаг 3: [status, mac, ip]); метаданные в arpClientDyn = [count, stride, flag, 0, 0], где count_index=0 (=4 записи), stride_index=1 (=3). Статус: 1=Bound(Привязано), 0=Unbound(Не привязано). Постраничной навигации, записей-на-страницу и флага 'есть ещё' нет (perpage/page/hasmore = -1). Массовых операций включения/выключения/удаления (EnAll/DisAll/DelAll) на странице нет, поэтому do_all пуст. Действия страницы (НЕ исполнять без явного запроса пользователя, они изменяющие): кнопка 'Bind All'/Capture -> GET ?ArpLock=ArpLocked (привязать все); кнопка 'Load All'/Resall -> submit name=Resall (загрузить все в список привязок); кнопка 'Refresh'/Refresh -> обновить. Кнопки Capture/Resall блокируются JS, если arpClientDyn[0]==0 (а Capture ещё и при arpClientDyn[2]!=0). Per-row ссылки (тоже изменяющие): Load -> ?reserve=1&ip=<IP>&mac=<MAC>&lock=<status>; Delete -> ?delete=1&ip=<IP>&mac=<MAC>&lock=<status>. Форма: method=GET, enctype=multipart/form-data, action=/userRpm/LanArpBindingListRpm.htm. Чтение таблицы безопасно (read-only), сама привязка делается на странице IP&MAC Binding (LanArpBindingRpm)."
+  },
+  {
+    "id": "LanArpBindingRpm",
+    "htm": "LanArpBindingRpm.htm",
+    "section": "Привязка IP и MAC",
+    "title": "Привязка IP/MAC: настройки",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "arpFixmapList",
+    "para_array": "arpFixmapPara",
+    "count_index": 3,
+    "stride_index": 4,
+    "perpage_index": -1,
+    "page_index": 1,
+    "hasmore_index": 2,
+    "columns": [
+      {
+        "label": "MAC-адрес",
+        "index": 0,
+        "kind": "mac"
+      },
+      {
+        "label": "IP-адрес",
+        "index": 1,
+        "kind": "ip"
+      },
+      {
+        "label": "Привязка (заблокирован)",
+        "index": 2,
+        "kind": "bool"
+      }
+    ],
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "State",
+        "label": "Привязать",
+        "type": "checkbox",
+        "src": [
+          "arpBindingAdvDynArray",
+          2
+        ],
+        "options": null,
+        "checked_value": "1",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Mac",
+        "label": "MAC-адрес",
+        "type": "mac",
+        "src": [
+          "arpBindingAdvDynArray",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Ip",
+        "label": "IP-адрес",
+        "type": "ip",
+        "src": [
+          "arpBindingAdvDynArray",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Changed",
+        "label": "Изменено (служебное)",
+        "type": "hidden",
+        "src": [
+          "arpBindingAdvDynArray",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "SelIndex",
+        "label": "Индекс записи (служебное)",
+        "type": "hidden",
+        "src": [
+          "arpBindingAdvDynArray",
+          4
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "0"
+      },
+      {
+        "name": "Page",
+        "label": "Страница (служебное)",
+        "type": "hidden",
+        "src": [
+          "arpBindingAdvDynArray",
+          5
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "1"
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "notes": "Глобальный тумблер ARP Binding (radio name=arpServer, value 0=Выкл/1=Вкл, текущее из arpFixmapPara[0]) сохраняется отдельным GET LanArpBindingRpm.htm?arpServer=<0|1>&Page=<page> (НЕ через Save). Записи списка добавляются формой ?Add=Add (GET, enctype multipart/form-data, action LanArpBindingRpm.htm) c полями State/Mac/Ip/Save. Удаление одной записи: ?Del=<i>&Page=<p>; вкл/выкл одной: ?enable=<0|1>&enableId=<i>&Page=<p>; массовые: ?doAll=EnAll|DisAll|DelAll&Page=<p>. Колонка bind (index 2): 1=Lock(заблокирован/привязан), 0=Unlock."
+  },
+  {
+    "id": "LanBrModeRpm",
+    "htm": "LanBrModeRpm.htm",
+    "section": "Сеть",
+    "title": "Режим LAN/IPTV",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "igmpEn",
+        "label": "IGMP Proxy",
+        "type": "select",
+        "src": [
+          "modeSel",
+          1
+        ],
+        "options": [
+          [
+            "0",
+            "Отключить"
+          ],
+          [
+            "1",
+            "Включить"
+          ]
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "mode_sel",
+        "label": "Режим",
+        "type": "select",
+        "src": [
+          "modeSel",
+          0
+        ],
+        "options": [
+          [
+            "0",
+            "Автоматически"
+          ],
+          [
+            "1",
+            "Мост"
+          ],
+          [
+            "2",
+            "802.1Q Tag VLAN"
+          ]
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "ru_br",
+        "label": "Порт для IPTV (режим Мост)",
+        "type": "select",
+        "src": [
+          "lanBrMode",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "LAN4"
+          ],
+          [
+            "2",
+            "LAN3 и LAN4"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "1"
+        ],
+        "optional": true
+      },
+      {
+        "name": "vlanInetEnb",
+        "label": "VLAN TAG для Интернет",
+        "type": "radio",
+        "src": [
+          "vidInfo",
+          11
+        ],
+        "options": [
+          [
+            "0",
+            "Отключить"
+          ],
+          [
+            "1",
+            "Включить"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "nat_vid",
+        "label": "Идентификатор VLAN для доступа в Интернет",
+        "type": "number",
+        "src": [
+          "vidInfo",
+          1
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "nat_pri",
+        "label": "Приоритет VLAN для доступа Интернет",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          2
+        ],
+        "options": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "1",
+            "1"
+          ],
+          [
+            "2",
+            "2"
+          ],
+          [
+            "3",
+            "3"
+          ],
+          [
+            "4",
+            "4"
+          ],
+          [
+            "5",
+            "5"
+          ],
+          [
+            "6",
+            "6"
+          ],
+          [
+            "7",
+            "7"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "ip_phone_vid",
+        "label": "Идентификатор VLAN для использования IP-телефона",
+        "type": "number",
+        "src": [
+          "vidInfo",
+          7
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "ip_phone_pri",
+        "label": "Приоритет VLAN для использования IP-телефона",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          8
+        ],
+        "options": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "1",
+            "1"
+          ],
+          [
+            "2",
+            "2"
+          ],
+          [
+            "3",
+            "3"
+          ],
+          [
+            "4",
+            "4"
+          ],
+          [
+            "5",
+            "5"
+          ],
+          [
+            "6",
+            "6"
+          ],
+          [
+            "7",
+            "7"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "iptv_vid",
+        "label": "Идентификатор VLAN для услуги IPTV",
+        "type": "number",
+        "src": [
+          "vidInfo",
+          3
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "iptv_pri",
+        "label": "Приоритет VLAN для услуги IPTV",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          4
+        ],
+        "options": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "1",
+            "1"
+          ],
+          [
+            "2",
+            "2"
+          ],
+          [
+            "3",
+            "3"
+          ],
+          [
+            "4",
+            "4"
+          ],
+          [
+            "5",
+            "5"
+          ],
+          [
+            "6",
+            "6"
+          ],
+          [
+            "7",
+            "7"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "enable_multi_iptv",
+        "label": "Включить Multicast VLAN",
+        "type": "checkbox",
+        "src": [
+          "vidInfo",
+          12
+        ],
+        "checked_value": "1",
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "multi_iptv_vid",
+        "label": "Идентификатор Multicast VLAN для услуги IPTV",
+        "type": "number",
+        "src": [
+          "vidInfo",
+          5
+        ],
+        "show_if": [
+          "enable_multi_iptv",
+          "1"
+        ],
+        "optional": true
+      },
+      {
+        "name": "multi_iptv_pri",
+        "label": "Приоритет Multicast VLAN для услуги IPTV",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          6
+        ],
+        "options": [
+          [
+            "0",
+            "0"
+          ],
+          [
+            "1",
+            "1"
+          ],
+          [
+            "2",
+            "2"
+          ],
+          [
+            "3",
+            "3"
+          ],
+          [
+            "4",
+            "4"
+          ],
+          [
+            "5",
+            "5"
+          ],
+          [
+            "6",
+            "6"
+          ],
+          [
+            "7",
+            "7"
+          ]
+        ],
+        "show_if": [
+          "enable_multi_iptv",
+          "1"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Lan",
+        "label": "Режим работы порта LAN1",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          9
+        ],
+        "options": [
+          [
+            "0",
+            "Интернет"
+          ],
+          [
+            "1",
+            "IPTV"
+          ],
+          [
+            "2",
+            "IP-телефон"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Lan",
+        "label": "Режим работы порта LAN2",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          9
+        ],
+        "options": [
+          [
+            "0",
+            "Интернет"
+          ],
+          [
+            "1",
+            "IPTV"
+          ],
+          [
+            "2",
+            "IP-телефон"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Lan",
+        "label": "Режим работы порта LAN3",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          9
+        ],
+        "options": [
+          [
+            "0",
+            "Интернет"
+          ],
+          [
+            "1",
+            "IPTV"
+          ],
+          [
+            "2",
+            "IP-телефон"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "Lan",
+        "label": "Режим работы порта LAN4",
+        "type": "select",
+        "src": [
+          "vidInfo",
+          9
+        ],
+        "options": [
+          [
+            "0",
+            "Интернет"
+          ],
+          [
+            "1",
+            "IPTV"
+          ],
+          [
+            "2",
+            "IP-телефон"
+          ]
+        ],
+        "show_if": [
+          "mode_sel",
+          "2"
+        ],
+        "optional": true
+      },
+      {
+        "name": "lan_brmask",
+        "label": "Маска портов Интернет (вычисляется из выбора LAN1-4)",
+        "type": "hidden",
+        "src": [
+          "vidInfo",
+          9
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "lan_iptv_mask",
+        "label": "Маска портов IPTV (вычисляется из выбора LAN1-4)",
+        "type": "hidden",
+        "src": [
+          "vidInfo",
+          10
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "lan_ipphonemask",
+        "label": "Маска портов IP-телефон (вычисляется)",
+        "type": "hidden",
+        "src": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": ""
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "LocalManageControlRpm",
+    "htm": "LocalManageControlRpm.htm",
+    "section": "Защита",
+    "title": "Локальное управление",
+    "kind": "form",
+    "danger": "Если выбрать режим «Только перечисленные ПК» и не указать MAC своего компьютера в списке, вы потеряете доступ к веб-интерфейсу роутера с этого ПК.",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "enableWhitelist",
+        "label": "Режим локального управления",
+        "type": "radio",
+        "src": [
+          "controlParam",
+          2
+        ],
+        "options": [
+          [
+            "0",
+            "Все ПК в локальной сети могут управлять роутером"
+          ],
+          [
+            "1",
+            "Только перечисленные ПК могут управлять роутером"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "mac0",
+        "label": "MAC 1",
+        "type": "mac",
+        "src": [
+          "macWhitelist",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "enableWhitelist",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "mac1",
+        "label": "MAC 2",
+        "type": "mac",
+        "src": [
+          "macWhitelist",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "enableWhitelist",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "mac2",
+        "label": "MAC 3",
+        "type": "mac",
+        "src": [
+          "macWhitelist",
+          2
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "enableWhitelist",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "mac3",
+        "label": "MAC 4",
+        "type": "mac",
+        "src": [
+          "macWhitelist",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "enableWhitelist",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "pcmac",
+        "label": "MAC-адрес вашего ПК",
+        "type": "static",
+        "src": [
+          "controlParam",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "MacCloneCfgRpm",
+    "htm": "MacCloneCfgRpm.htm",
+    "section": "Сеть",
+    "title": "Клонирование MAC-адреса",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "mac1",
+        "label": "MAC-адрес WAN",
+        "type": "mac",
+        "src": [
+          "macCloneList",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "pcmac",
+        "label": "MAC-адрес вашего компьютера",
+        "type": "mac",
+        "src": [
+          "macCloneInf",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Одна WAN-форма (macCloneInf[0]==1). Поле mac1 предзаполняется текущим WAN MAC из macCloneList[0] (значение из атрибута value=macCloneList[Row], где Row=(i-1)*2=0). Поле pcmac — disabled/read-only, заполняется из macCloneInf[1].toUpperCase() и НЕ редактируется/НЕ отправляется (показ только). Кнопки RestoreMAC (восстановить заводской MAC из macCloneList[1]) и CloneMAC (скопировать MAC ПК в выбранный WAN) — это клиентский JS (doRestore/doClone), не отдельные параметры сохранения. CloneMAC отключается если macCloneInf[2]==1. SELECT name=wan скрыт при одном WAN. Форма GET action=MacCloneCfgRpm.htm; объявлен enctype=multipart/form-data, но метод GET, поэтому параметры идут в query string. Сохранение: GET MacCloneCfgRpm.htm?mac1=<MAC>&Save=Save. Клиентская валидация is_macaddr() для всех mac[i]. ?Add=Add возвращает идентичную страницу (это форма, не список — формы добавления нет)."
+  },
+  {
+    "id": "ManageControlRpm",
+    "htm": "ManageControlRpm.htm",
+    "section": "Защита",
+    "title": "Удалённое управление",
+    "kind": "form",
+    "danger": "Меняет порт веб-интерфейса роутера и IP-адрес, которому разрешён удалённый доступ. Неверное значение порта или IP может полностью закрыть доступ к веб-морде (192.168.0.1:8080) — потребуется сброс роутера. Меняйте только осознанно.",
+    "reboot_note": true,
+    "fields": [
+      {
+        "name": "port",
+        "label": "Порт веб-управления",
+        "type": "number",
+        "src": [
+          "managementPara",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "telnet_port",
+        "label": "Порт управления (Telnet)",
+        "type": "number",
+        "src": [
+          "managementPara",
+          4
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "managementPara",
+          "3==1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "ip",
+        "label": "IP-адрес удалённого управления (255.255.255.255 — для всех)",
+        "type": "ip",
+        "src": [
+          "managementPara",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "ParentCtrlRpm",
+    "htm": "ParentCtrlRpm.htm",
+    "section": "Родительский контроль",
+    "title": "Настройки родительского контроля",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "_note_top_form": "Над списком есть отдельная мини-форма (включение род. контроля + MAC родительского ПК). Сохраняется НЕ через Save=Save, а через doSave(): GET ParentCtrlRpm.htm?ctrl_enable=<0|1>&parent_mac_addr=<MAC>&Page=<n>. Внимание: в doSave логика инвертирована — bEnabled = (radio[0]==Disable checked)?0:1; то есть отправляется 1 когда выбран Enable. Поля формы вынесены в top_form_fields.",
+    "top_form_fields": [
+      {
+        "name": "ctrl_enable",
+        "label": "Родительский контроль",
+        "type": "radio",
+        "src": [
+          "parent_ctrl_global_cfg_dyn_array",
+          0
+        ],
+        "options": [
+          [
+            "1",
+            "Включить"
+          ],
+          [
+            "0",
+            "Выключить"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "parent_mac_addr",
+        "label": "MAC-адрес родительского ПК",
+        "type": "mac",
+        "src": [
+          "parent_ctrl_global_cfg_dyn_array",
+          2
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "top_form_save": {
+      "method": "GET",
+      "url": "ParentCtrlRpm.htm",
+      "params_order": [
+        "ctrl_enable",
+        "parent_mac_addr",
+        "Page"
+      ],
+      "no_Save_param": true
+    },
+    "list_array": "parent_ctrl_data_param",
+    "para_array": "parent_ctrl_page_param",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": -1,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "MAC-адрес",
+        "index": 0,
+        "kind": "mac"
+      },
+      {
+        "label": "Описание сайта",
+        "index": 1,
+        "kind": "text"
+      },
+      {
+        "label": "Расписание",
+        "index": 3,
+        "kind": "text"
+      },
+      {
+        "label": "Включено",
+        "index": 4,
+        "kind": "bool"
+      }
+    ],
+    "_columns_notes": "Перебор записей: row = i * parent_ctrl_page_param[3] (stride=5). [0]=MAC (если ''→'Except '+parent_mac_addr), [1]=описание сайта, [2]=признак расписания (если ==255 → 'Постоянно'/Permanent), [3]=строка расписания, [4]=флаг enable (0/1). Перелистывание: 8 записей на страницу (idStart=(page-1)*8; pageNum=para[4]/8+1). Сейчас записей нет (para[2]=0).",
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "child_mac",
+        "label": "MAC-адрес детского ПК",
+        "type": "mac",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          2
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "lan_lists",
+        "label": "Все MAC-адреса в текущей LAN (выбор подставляет child_mac)",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "888",
+            "--выберите--"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_comment",
+        "label": "Описание сайта (1-16 симв., обязательно)",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "url_0",
+        "label": "Разрешённое доменное имя 1",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          9
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_1",
+        "label": "Разрешённое доменное имя 2",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          10
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_2",
+        "label": "Разрешённое доменное имя 3",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          11
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_3",
+        "label": "Разрешённое доменное имя 4",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          12
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_4",
+        "label": "Разрешённое доменное имя 5",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          13
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_5",
+        "label": "Разрешённое доменное имя 6",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          14
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_6",
+        "label": "Разрешённое доменное имя 7",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          15
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "url_7",
+        "label": "Разрешённое доменное имя 8",
+        "type": "text",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          16
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "scheds_lists",
+        "label": "Время действия (расписание)",
+        "type": "select",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          5
+        ],
+        "options": [
+          [
+            "255",
+            "В любое время"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "enable",
+        "label": "Статус",
+        "type": "select",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          1
+        ],
+        "options": [
+          [
+            "0",
+            "Отключено"
+          ],
+          [
+            "1",
+            "Включено"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "add_hidden_fields": [
+      {
+        "name": "Changed",
+        "type": "hidden",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          6
+        ],
+        "hidden_value": "0"
+      },
+      {
+        "name": "SelIndex",
+        "type": "hidden",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          7
+        ],
+        "hidden_value": "0"
+      },
+      {
+        "name": "Page",
+        "type": "hidden",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          8
+        ],
+        "hidden_value": "0"
+      },
+      {
+        "name": "rule_mode",
+        "type": "hidden",
+        "src": [
+          "parent_ctrl_adv_dyn_array",
+          0
+        ],
+        "hidden_value": "0"
+      }
+    ],
+    "add_save_extra": {
+      "Save": "Save"
+    },
+    "_add_notes": "Форма добавления/изменения записи (action=ParentCtrlRpm.htm, GET, enctype=multipart/form-data, onSubmit=doSubmit). Кнопка Save: name=Save value=Save. Скрытые поля: Changed, SelIndex, Page, rule_mode — заполняются из parent_ctrl_adv_dyn_array (для новой записи: rule_mode=0, Changed=0, SelIndex=0, Page=0). Расписания scheds_lists по умолчанию только 'Anytime'(255), остальные подтягиваются из schedule_name_list_dyn_array (сейчас пуст). lan_lists — только UI-помощник: подставляет MAC в child_mac, на сервер шлётся как есть, но реально используется child_mac. Валидация: url_comment обязателен (1-16), хотя бы один url_* должен быть валидным доменом."
+  },
+  {
+    "id": "QoSCfgRpm",
+    "htm": "QoSCfgRpm.htm",
+    "section": "Контроль пропускной способности",
+    "title": "Контроль ПС: общие настройки",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "QoSCtrl",
+        "label": "Включить контроль пропускной способности",
+        "type": "checkbox",
+        "src": [
+          "QoSCfgPara",
+          0
+        ],
+        "options": null,
+        "checked_value": "1",
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "userWanType",
+        "label": "Тип линии",
+        "type": "radio",
+        "src": [
+          "QoSCfgPara",
+          5
+        ],
+        "options": [
+          [
+            "0",
+            "ADSL"
+          ],
+          [
+            "1",
+            "Другая"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "up_bandWidth",
+        "label": "Исходящая пропускная способность (Kbps)",
+        "type": "number",
+        "src": [
+          "QoSCfgPara",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "down_bandWidth",
+        "label": "Входящая пропускная способность (Kbps)",
+        "type": "number",
+        "src": [
+          "QoSCfgPara",
+          2
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "QoSRuleListRpm",
+    "htm": "QoSRuleListRpm.htm",
+    "section": "Контроль пропускной способности",
+    "title": "Список правил QoS (управление пропускной способностью)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "QoSRuleListArray",
+    "para_array": "QoSRuleListParam",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": 4,
+    "page_index": 0,
+    "hasmore_index": -1,
+    "columns": [
+      {
+        "label": "ID правила",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Описание / диапазон IP",
+        "index": 1,
+        "kind": "text"
+      },
+      {
+        "label": "Исходящая мин. (Кбит/с)",
+        "index": 4,
+        "kind": "text"
+      },
+      {
+        "label": "Исходящая макс. (Кбит/с)",
+        "index": 3,
+        "kind": "text"
+      },
+      {
+        "label": "Входящая мин. (Кбит/с)",
+        "index": 6,
+        "kind": "text"
+      },
+      {
+        "label": "Входящая макс. (Кбит/с)",
+        "index": 5,
+        "kind": "text"
+      },
+      {
+        "label": "Включено",
+        "index": 7,
+        "kind": "bool"
+      }
+    ],
+    "do_all": [
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "enable",
+        "label": "Включить правило",
+        "type": "checkbox",
+        "src": [
+          "QoSRuleCfgParam",
+          9
+        ],
+        "options": null,
+        "checked_value": "true",
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "start_ip_addr",
+        "label": "Начальный IP диапазона",
+        "type": "ip",
+        "src": [
+          "QoSRuleCfgParam",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "end_ip_addr",
+        "label": "Конечный IP диапазона",
+        "type": "ip",
+        "src": [
+          "QoSRuleCfgParam",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "start_port",
+        "label": "Начальный порт диапазона",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          10
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "end_port",
+        "label": "Конечный порт диапазона",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          11
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "protocol",
+        "label": "Протокол",
+        "type": "select",
+        "src": [
+          "QoSRuleCfgParam",
+          12
+        ],
+        "options": [
+          [
+            "0",
+            "ALL (все)"
+          ],
+          [
+            "1",
+            "TCP"
+          ],
+          [
+            "2",
+            "UDP"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "min_up_band_width",
+        "label": "Исходящая полоса, минимум (Кбит/с)",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "max_up_band_width",
+        "label": "Исходящая полоса, максимум (Кбит/с)",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          4
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "min_down_band_width",
+        "label": "Входящая полоса, минимум (Кбит/с)",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          5
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "max_down_band_width",
+        "label": "Входящая полоса, максимум (Кбит/с)",
+        "type": "number",
+        "src": [
+          "QoSRuleCfgParam",
+          6
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "curEditId",
+        "label": "ID редактируемой записи (служебное)",
+        "type": "hidden",
+        "src": [
+          "QoSRuleCfgParam",
+          8
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": ""
+      },
+      {
+        "name": "Page",
+        "label": "Номер страницы (служебное)",
+        "type": "hidden",
+        "src": [
+          "QoSRuleCfgParam",
+          7
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": "1"
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "add_action": "QoSRuleListRpm.htm",
+    "add_method": "GET",
+    "notes": "Форма добавления/редактирования рендерится отдельной страницей QoSRuleCfgRpm.htm?Add=Add, но её submit (кнопка Save) уходит GET-запросом на QoSRuleListRpm.htm с параметром Save=Save. add_fields ссылаются на массив QoSRuleCfgParam со страницы конфигурации, а не на QoSRuleListArray/QoSRuleListParam списка."
+  },
+  {
+    "id": "RestoreDefaultCfgRpm",
+    "htm": "RestoreDefaultCfgRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Заводские настройки (сброс к заводским)",
+    "kind": "special",
+    "danger": "ОПАСНО: полный сброс роутера к заводским настройкам. Сбрасывает ВСЕ настройки, в т.ч. IP роутера на 192.168.0.1, логин/пароль на admin/admin, SSID и пароль Wi-Fi, настройки LAN/WAN. После сброса роутер перезагружается, и текущее подключение (включая RouterDebugger) будет потеряно. Необратимо.",
+    "reboot_note": true,
+    "handler": "factory-reset",
+    "special_notes": "Форма: <FORM action=\"RestoreDefaultCfgRpm.htm\" method=\"get\" enctype=\"multipart/form-data\">. Единственный элемент — кнопка submit name=\"Restorefactory\" value=\"Restore\". Несмотря на enctype=multipart/form-data, реальная отправка — это простой GET-запрос с одним параметром: GET http://192.168.0.1:8080/userRpm/RestoreDefaultCfgRpm.htm?Restorefactory=Restore (с обязательным Referer). На клиенте onClick=doSubmit() показывает диалог подтверждения (str_pages.ntw_restore_default_cfg.js_mksure_restore) перед отправкой. В HTML нет ни одного JS-массива (var X = new Array(...)) — данных/таблиц на странице нет, только кнопка-действие. ⛔ НЕ отправлять Restorefactory=Restore автоматически: это необратимый сброс, после которого роутер становится недоступен по текущему адресу/учётке до восстановления дефолтной конфигурации (IP 192.168.0.1, admin/admin) и завершения перезагрузки."
+  },
+  {
+    "id": "SoftwareUpgradeRpm",
+    "htm": "SoftwareUpgradeRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Обновление прошивки",
+    "kind": "special",
+    "danger": "ПРОШИВКА РОУТЕРА. Загрузка некорректного или прерванного файла .bin может необратимо вывести роутер из строя (кирпич). После успешной прошивки роутер перезагружается, все настройки могут сброситься. Выполнять только проверенным файлом для модели TL-WR740N v4.",
+    "reboot_note": true,
+    "fields": [
+      {
+        "name": "Filename",
+        "label": "Файл прошивки (.bin)",
+        "type": "static",
+        "src": null,
+        "options": [],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {},
+    "arrays": [
+      "softUpInf"
+    ],
+    "handler": "file-upload",
+    "special_notes": "ФАЙЛОВАЯ ЗАГРУЗКА ПРОШИВКИ (POST, multipart). Форма: <FORM action=\"/incoming/Firmware.htm\" enctype=\"multipart/form-data\" method=\"post\" onSubmit=\"return doSubmit();\">. Файловый input: name=\"Filename\" type=\"file\". Кнопка отправки: name=\"Upgrade\" type=\"submit\" value=\"Upgrade\". ТОЧНЫЙ URL/ACTION: http://192.168.0.1:8080/incoming/Firmware.htm , метод POST, enctype=multipart/form-data, тело = одно поле Filename (содержимое .bin) + Upgrade=Upgrade. КЛИЕНТСКАЯ ВАЛИДАЦИЯ doSubmit(): (1) Filename не пустой; (2) расширение строго \".bin\" (tmp.substr(len-4)=='.bin'); (3) длина имени файла (без пути) < 64 символов; (4) обязательное confirm() перед прошивкой. БЛОКИРОВКА: если softUpInf[2] != 0 (прошивка уже идёт) — поля Filename и Upgrade disabled. ДАННЫЕ ИЗ МАССИВА softUpInf: [0]=текущая версия прошивки (показывается в div#fversion, пример '3.13.2 Build 140814 Rel.39331n'), [1]=аппаратная версия (div#hversion, пример 'WR740N v4 00000000'), [2]=флаг идущей прошивки (0=готов), [3]/[4]=резерв (0,0). НЕ ИСПОЛЬЗОВАТЬ обычный GET-сейв движка — это бинарная multipart POST-загрузка на отдельный endpoint /incoming/Firmware.htm, НЕ на userRpm. Страница НЕ меняет IP/логин/пароль напрямую, но перепрошивает устройство (опасность кирпича/сброса настроек)."
+  },
+  {
+    "id": "SpecialAppRpm",
+    "htm": "SpecialAppRpm.htm",
+    "section": "Переадресация",
+    "title": "Port Triggering (Запуск портов)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "specAppList",
+    "para_array": "specAppPara",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": 4,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "Триггер-порт",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Триггер-протокол",
+        "index": 1,
+        "kind": "proto"
+      },
+      {
+        "label": "Входящие порты",
+        "index": 2,
+        "kind": "text"
+      },
+      {
+        "label": "Входящий протокол",
+        "index": 3,
+        "kind": "proto"
+      },
+      {
+        "label": "Состояние",
+        "index": 4,
+        "kind": "status"
+      }
+    ],
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "trPort",
+        "label": "Триггер-порт",
+        "type": "number",
+        "src": null,
+        "optional": false,
+        "show_if": null
+      },
+      {
+        "name": "trProtocol",
+        "label": "Триггер-протокол",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "1",
+            "ALL (все)"
+          ],
+          [
+            "2",
+            "TCP"
+          ],
+          [
+            "3",
+            "UDP"
+          ]
+        ],
+        "optional": false,
+        "show_if": null
+      },
+      {
+        "name": "inPort",
+        "label": "Входящие порты (напр. 6970-6999 или 80,443)",
+        "type": "text",
+        "src": null,
+        "optional": false,
+        "show_if": null
+      },
+      {
+        "name": "inProtocol",
+        "label": "Входящий протокол",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "1",
+            "ALL (все)"
+          ],
+          [
+            "2",
+            "TCP"
+          ],
+          [
+            "3",
+            "UDP"
+          ]
+        ],
+        "optional": false,
+        "show_if": null
+      },
+      {
+        "name": "State",
+        "label": "Состояние",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "0",
+            "Отключено"
+          ],
+          [
+            "1",
+            "Включено"
+          ]
+        ],
+        "optional": false,
+        "show_if": null
+      },
+      {
+        "name": "Changed",
+        "label": "(служебное)",
+        "type": "hidden",
+        "src": null,
+        "hidden_value": "0",
+        "optional": true,
+        "show_if": null
+      },
+      {
+        "name": "SelIndex",
+        "label": "(служебное)",
+        "type": "hidden",
+        "src": null,
+        "hidden_value": "0",
+        "optional": true,
+        "show_if": null
+      },
+      {
+        "name": "Page",
+        "label": "(номер страницы)",
+        "type": "hidden",
+        "src": null,
+        "hidden_value": "1",
+        "optional": true,
+        "show_if": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "StaticRouteTableRpm",
+    "htm": "StaticRouteTableRpm.htm",
+    "section": "Маршрутизация",
+    "title": "Статическая маршрутизация (статические маршруты)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "routeList",
+    "para_array": "SRTPara",
+    "count_index": 2,
+    "stride_index": 3,
+    "perpage_index": 4,
+    "page_index": 0,
+    "hasmore_index": 1,
+    "columns": [
+      {
+        "label": "Сеть назначения",
+        "index": 0,
+        "kind": "ip"
+      },
+      {
+        "label": "Маска подсети",
+        "index": 1,
+        "kind": "ip"
+      },
+      {
+        "label": "Шлюз по умолчанию",
+        "index": 2,
+        "kind": "ip"
+      },
+      {
+        "label": "Состояние",
+        "index": 3,
+        "kind": "status"
+      }
+    ],
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "Ip",
+        "label": "Сеть назначения",
+        "type": "ip",
+        "src": [
+          "srtEditInf",
+          0
+        ],
+        "optional": false
+      },
+      {
+        "name": "Mask",
+        "label": "Маска подсети",
+        "type": "ip",
+        "src": [
+          "srtEditInf",
+          1
+        ],
+        "optional": false
+      },
+      {
+        "name": "Gateway",
+        "label": "Шлюз по умолчанию",
+        "type": "ip",
+        "src": [
+          "srtEditInf",
+          2
+        ],
+        "optional": false
+      },
+      {
+        "name": "State",
+        "label": "Состояние",
+        "type": "select",
+        "src": [
+          "srtEditInf",
+          3
+        ],
+        "options": [
+          [
+            "0",
+            "Отключено"
+          ],
+          [
+            "1",
+            "Включено"
+          ]
+        ],
+        "optional": false
+      },
+      {
+        "name": "Changed",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "srtEditInf",
+          4
+        ],
+        "hidden_value": "0",
+        "optional": true
+      },
+      {
+        "name": "SelIndex",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "srtEditInf",
+          5
+        ],
+        "hidden_value": "0",
+        "optional": true
+      },
+      {
+        "name": "Page",
+        "label": "",
+        "type": "hidden",
+        "src": [
+          "srtEditInf",
+          6
+        ],
+        "hidden_value": "1",
+        "optional": true
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "SysRouteTableRpm",
+    "htm": "SysRouteTableRpm.htm",
+    "section": "Маршрутизация",
+    "title": "Таблица маршрутизации (System Routing Table)",
+    "kind": "readonly",
+    "danger": "",
+    "reboot_note": false,
+    "arrays": [
+      "SysRouteTable",
+      "SysRouteTablePara"
+    ],
+    "list_array": "SysRouteTable",
+    "para_array": "SysRouteTablePara",
+    "count_index": 0,
+    "stride_index": 1,
+    "perpage_index": -1,
+    "page_index": -1,
+    "hasmore_index": -1,
+    "columns": [
+      {
+        "label": "Сеть назначения",
+        "index": 0,
+        "kind": "ip"
+      },
+      {
+        "label": "Маска подсети",
+        "index": 1,
+        "kind": "ip"
+      },
+      {
+        "label": "Шлюз",
+        "index": 2,
+        "kind": "ip"
+      },
+      {
+        "label": "Интерфейс",
+        "index": 3,
+        "kind": "text"
+      }
+    ],
+    "do_all": [],
+    "refresh_param": {
+      "Refresh": "Refresh"
+    },
+    "special_notes": "Чисто read-only страница системной таблицы маршрутизации. Записи рендерятся JS-циклом из плоского массива SysRouteTable со stride=4 (SysRouteTablePara[0]=кол-во записей, SysRouteTablePara[1]=шаг=4). Колонки на запись: [0] сеть назначения, [1] маска, [2] шлюз, [3] интерфейс (WAN / LAN & WLAN). Единственный элемент управления — submit-кнопка name=Refresh value=Refresh, форма method=get action=SysRouteTableRpm.htm (просто перезагружает страницу). Никаких Add/Save/Del/doAll нет — добавления записей на этой странице не существует (форма добавления ?Add=Add не делалась, т.к. страница readonly и не имеет add-механизма). Изменяющих параметров на странице нет."
+  },
+  {
+    "id": "SystemLogRpm",
+    "htm": "SystemLogRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Системный журнал",
+    "kind": "readonly",
+    "danger": "Кнопка «Очистить журнал» (ClearLog) безвозвратно удаляет все записи лога роутера. IP/логин/пароль не меняет, перезагрузку не делает.",
+    "reboot_note": false,
+    "arrays": [
+      "logList",
+      "logTypeArray",
+      "syslogWebConf",
+      "logInf",
+      "logWanList",
+      "logExpList"
+    ],
+    "list_array": "logList",
+    "para_array": "syslogWebConf",
+    "count_index": -1,
+    "stride_index": -1,
+    "perpage_index": -1,
+    "page_index": 3,
+    "hasmore_index": -1,
+    "columns": [
+      {
+        "label": "Время",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Тип",
+        "index": 1,
+        "kind": "text"
+      },
+      {
+        "label": "Уровень",
+        "index": 2,
+        "kind": "status"
+      },
+      {
+        "label": "Содержимое",
+        "index": 3,
+        "kind": "text"
+      }
+    ],
+    "filters": [
+      {
+        "name": "logType",
+        "label": "Тип журнала",
+        "type": "select",
+        "src": [
+          "syslogWebConf",
+          0
+        ],
+        "options": [
+          [
+            "0",
+            "ВСЕ"
+          ],
+          [
+            "1",
+            "PPP"
+          ],
+          [
+            "2",
+            "DHCP"
+          ],
+          [
+            "3",
+            "WIRELESS"
+          ],
+          [
+            "4",
+            "DDNS"
+          ],
+          [
+            "5",
+            "SECURITY"
+          ],
+          [
+            "6",
+            "FILTER"
+          ],
+          [
+            "7",
+            "SHARING"
+          ],
+          [
+            "8",
+            "3G"
+          ],
+          [
+            "9",
+            "OTHER"
+          ]
+        ]
+      },
+      {
+        "name": "logLevel",
+        "label": "Уровень журнала",
+        "type": "select",
+        "src": [
+          "syslogWebConf",
+          1
+        ],
+        "options": [
+          [
+            "3",
+            "ERROR"
+          ],
+          [
+            "4",
+            "WARNING"
+          ],
+          [
+            "5",
+            "NOTICE"
+          ],
+          [
+            "6",
+            "INFO"
+          ],
+          [
+            "7",
+            "ALL"
+          ]
+        ]
+      }
+    ],
+    "info_arrays": [
+      "logInf",
+      "logWanList"
+    ],
+    "special_notes": "Страница только для чтения. Записи лога лежат в массиве logList: каждая строка — одна запись с табуляцией (\\t) как разделителем 4 полей: Время | Тип (дополнен пробелами до 10 симв.) | Уровень (ERROR/WARNING/NOTICE/INFO) | Содержимое. Терминатор массива 0,0 (последние 2 элемента — не записи). Текущий тип/уровень/страница берутся из syslogWebConf: [0]=logType, [1]=logLevel, [2]=флаг Auto Mail (0=выкл), [3]=текущая страница (curPage). На странице 30 записей (logPerPage=30). Фильтрация и пагинация — через GET: SystemLogRpm.htm?logType=<i>&logLevel=<j>&pageNum=<n> (location.href, без сохранения). Доп. кнопки: «Save Log» скачивает SystemLog.txt; «Mail Log» делает GET SystemLogRpm.htm?doMailLog=2 (отправляет лог на почту, настроенную в AutoEmailRpm.htm); «Mail Settings» ведёт на AutoEmailRpm.htm. logInf содержит сводку (время аптайма, версия H/S, LAN IP/маска), logWanList — строку WAN-соединения. Массив logExpList пуст (терминатор 0,0). ОПАСНО: кнопка «Clear Log» (name=ClearLog, type=submit, форма POST action=SystemLogRpm.htm enctype=multipart/form-data) с подтверждением doSubmit() очищает весь журнал — НЕ слать автоматически."
+  },
+  {
+    "id": "SystemStatisticRpm",
+    "htm": "SystemStatisticRpm.htm",
+    "section": "Системные инструменты",
+    "title": "Статистика по IP",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "statList",
+    "para_array": "StatRulePara",
+    "count_index": 4,
+    "stride_index": 5,
+    "perpage_index": 2,
+    "page_index": 1,
+    "hasmore_index": 4,
+    "columns": [
+      {
+        "label": "IP-адрес",
+        "index": 1,
+        "kind": "ip"
+      },
+      {
+        "label": "MAC-адрес",
+        "index": 2,
+        "kind": "mac"
+      },
+      {
+        "label": "Всего пакетов",
+        "index": 3,
+        "kind": "text"
+      },
+      {
+        "label": "Всего байт",
+        "index": 4,
+        "kind": "text"
+      },
+      {
+        "label": "Текущие пакеты",
+        "index": 5,
+        "kind": "text"
+      },
+      {
+        "label": "Текущие байты",
+        "index": 6,
+        "kind": "text"
+      },
+      {
+        "label": "ICMP Tx (передано/всего)",
+        "index": 7,
+        "kind": "text"
+      },
+      {
+        "label": "UDP Tx (передано/всего)",
+        "index": 9,
+        "kind": "text"
+      },
+      {
+        "label": "SYN Tx (передано/всего)",
+        "index": 11,
+        "kind": "text"
+      }
+    ],
+    "do_all": [
+      "ResetAll",
+      "DeleteAll"
+    ],
+    "add_fields": [],
+    "form": {
+      "note": "Глобальные настройки сбора статистики на этой же странице (метод GET)",
+      "fields": [
+        {
+          "name": "interval",
+          "label": "Интервал статистики пакетов (5~60 сек)",
+          "type": "select",
+          "src": [
+            "StatRulePara",
+            1
+          ],
+          "options": [
+            [
+              "5",
+              "5"
+            ],
+            [
+              "10",
+              "10"
+            ],
+            [
+              "15",
+              "15"
+            ],
+            [
+              "20",
+              "20"
+            ],
+            [
+              "25",
+              "25"
+            ],
+            [
+              "30",
+              "30"
+            ],
+            [
+              "35",
+              "35"
+            ],
+            [
+              "40",
+              "40"
+            ],
+            [
+              "45",
+              "45"
+            ],
+            [
+              "50",
+              "50"
+            ],
+            [
+              "55",
+              "55"
+            ],
+            [
+              "60",
+              "60"
+            ]
+          ],
+          "show_if": null,
+          "optional": false,
+          "hidden_value": null
+        },
+        {
+          "name": "autoRefresh",
+          "label": "Автообновление",
+          "type": "checkbox",
+          "src": [
+            "StatRulePara",
+            2
+          ],
+          "checked_value": "2",
+          "show_if": null,
+          "optional": true,
+          "hidden_value": null
+        },
+        {
+          "name": "sortType",
+          "label": "Правило сортировки",
+          "type": "select",
+          "src": [
+            "StatRulePara",
+            3
+          ],
+          "options": [
+            [
+              "1",
+              "Сортировать по IP-адресу"
+            ],
+            [
+              "2",
+              "Сортировать по всего пакетов"
+            ],
+            [
+              "3",
+              "Сортировать по всего байт"
+            ],
+            [
+              "4",
+              "Сортировать по текущим пакетам"
+            ],
+            [
+              "5",
+              "Сортировать по текущим байтам"
+            ]
+          ],
+          "show_if": null,
+          "optional": false,
+          "hidden_value": null
+        },
+        {
+          "name": "Num_per_page",
+          "label": "Записей на страницу",
+          "type": "select",
+          "src": [
+            "PageListPara",
+            2
+          ],
+          "options": [
+            [
+              "5",
+              "5"
+            ],
+            [
+              "10",
+              "10"
+            ],
+            [
+              "20",
+              "20"
+            ],
+            [
+              "50",
+              "50"
+            ],
+            [
+              "100",
+              "100"
+            ]
+          ],
+          "show_if": null,
+          "optional": true,
+          "hidden_value": null
+        }
+      ]
+    },
+    "save_extra": {},
+    "list_ops": {
+      "enable_stat": "SystemStatisticRpm.htm?Staton=Enable",
+      "disable_stat": "SystemStatisticRpm.htm?Statoff=Disable",
+      "reset_one": "SystemStatisticRpm.htm?resetone={recordId}&interval={interval}&autoRefresh={autoRefresh}&sortType={sortType}&Num_per_page={itemsPerPage}&Goto_page={currentPage}",
+      "delete_one": "SystemStatisticRpm.htm?delone={recordId}&interval={interval}&autoRefresh={autoRefresh}&sortType={sortType}&Num_per_page={itemsPerPage}&Goto_page={currentPage}",
+      "reset_all": "SystemStatisticRpm.htm?ResetAll=All&interval={interval}&autoRefresh={autoRefresh}&sortType={sortType}&Num_per_page={itemsPerPage}&Goto_page={currentPage}",
+      "delete_all": "SystemStatisticRpm.htm?DeleteAll=All&interval={interval}&autoRefresh={autoRefresh}&sortType={sortType}&Num_per_page={itemsPerPage}&Goto_page={currentPage}",
+      "paging": "SystemStatisticRpm.htm?Page={nPage}",
+      "num_per_page": "SystemStatisticRpm.htm?NumPerPage={value}"
+    },
+    "notes": "statList[row+0]=recordId(скрытый, для resetone/delone); внутри записи stride=13. Колонки ICMP/UDP/SYN на странице рендерятся как пара 'Tx/Rx' (индексы 7-8, 9-10, 11-12). recordId не отображается. Запись 'добавить' на странице отсутствует."
+  },
+  {
+    "id": "UpnpCfgRpm",
+    "htm": "UpnpCfgRpm.htm",
+    "section": "Переадресация",
+    "title": "UPnP",
+    "kind": "readonly",
+    "danger": "",
+    "reboot_note": false,
+    "arrays": [
+      "uPnPList",
+      "uPnPPara"
+    ],
+    "list_array": "uPnPList",
+    "para_array": "uPnPPara",
+    "count_index": 1,
+    "stride_index": 2,
+    "perpage_index": -1,
+    "page_index": -1,
+    "hasmore_index": -1,
+    "columns": [
+      {
+        "label": "Описание приложения",
+        "index": 0,
+        "kind": "text"
+      },
+      {
+        "label": "Внешний порт",
+        "index": 1,
+        "kind": "text"
+      },
+      {
+        "label": "Протокол",
+        "index": 2,
+        "kind": "proto"
+      },
+      {
+        "label": "Внутренний порт",
+        "index": 3,
+        "kind": "text"
+      },
+      {
+        "label": "IP-адрес",
+        "index": 4,
+        "kind": "ip"
+      },
+      {
+        "label": "Статус",
+        "index": 5,
+        "kind": "status"
+      }
+    ],
+    "do_all": [],
+    "toggle": {
+      "status_src": [
+        "uPnPPara",
+        0
+      ],
+      "enable": {
+        "upnpenb": "Enable",
+        "Upnpenable": "Enable"
+      },
+      "disable": {
+        "upnpenb": "Disable",
+        "Upnpdisable": "Disable"
+      },
+      "note": "Состояние UPnP (uPnPPara[0]: 0=выключено, 1=включено) переключается GET-запросом к UpnpCfgRpm.htm. Включение: upnpenb=Enable + Upnpenable=Enable. Выключение: upnpenb=Disable + Upnpdisable=Disable. Скрытое поле upnpenb выставляется JS doSubmit() как обратное текущему состоянию."
+    },
+    "special_notes": "Таблица readonly: записи UPnP создаются автоматически устройствами в сети по протоколу UPnP, добавление/удаление/правка через веб-морду недоступны. Имена литеральных массивов из HTML: uPnPList (записи, stride=6: 0=описание, 1=внешний порт, 2=протокол(0=TCP/1=UDP), 3=внутр.порт, 4=IP, 5=статус(0=выкл/1=вкл)); uPnPPara (метаданные: [0]=флаг вкл/выкл UPnP, [1]=кол-во записей, [2]=шаг=6). Единственное пользовательское действие — переключатель Включить/Выключить UPnP (см. блок toggle). ?Add=Add НЕ открывает форму добавления — сервер возвращает ту же страницу (проверено, 4762 байт, идентична исходной), поэтому add_fields отсутствуют. Изменения IP/логина/пароля/сброса нет."
+  },
+  {
+    "id": "WanCfgRpm",
+    "htm": "PPPoECfgRpm.htm",
+    "section": "Сеть",
+    "title": "WAN (интернет) — PPPoE/Россия PPPoE",
+    "kind": "form",
+    "danger": "Изменение логина/пароля PPPoE или типа WAN-подключения может оборвать доступ в интернет. Это НЕ пароль роутера. Кнопка Save применяет настройки WAN; кнопки Connect/Disconnect управляют сессией. Смена 'Тип подключения WAN' переводит на другую страницу настройки (Dynamic/Static/L2TP/PPTP).",
+    "reboot_note": false,
+    "fields": [
+      {
+        "name": "wan",
+        "label": "WAN-порт",
+        "type": "select",
+        "src": [
+          "pppoeInf",
+          6
+        ],
+        "options": [
+          [
+            "0",
+            "WAN1"
+          ]
+        ],
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "wantype",
+        "label": "Тип подключения WAN",
+        "type": "select",
+        "src": null,
+        "options": [
+          [
+            "0",
+            "Динамический IP (Dynamic IP)"
+          ],
+          [
+            "1",
+            "Статический IP (Static IP)"
+          ],
+          [
+            "2",
+            "PPPoE/Россия PPPoE"
+          ],
+          [
+            "5",
+            "BigPond Cable"
+          ],
+          [
+            "6",
+            "L2TP/Россия L2TP"
+          ],
+          [
+            "7",
+            "PPTP/Россия PPTP"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "acc",
+        "label": "Имя пользователя (PPPoE)",
+        "type": "text",
+        "src": [
+          "pppoeInf",
+          7
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "psw",
+        "label": "Пароль (PPPoE)",
+        "type": "password",
+        "src": [
+          "pppoeInf",
+          8
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "confirm",
+        "label": "Подтверждение пароля (PPPoE)",
+        "type": "password",
+        "src": [
+          "pppoeInf",
+          8
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "SecType",
+        "label": "Вторичное подключение",
+        "type": "radio",
+        "src": [
+          "pppoeInf",
+          29
+        ],
+        "options": [
+          [
+            "0",
+            "Отключено"
+          ],
+          [
+            "1",
+            "Динамический IP"
+          ],
+          [
+            "2",
+            "Статический IP"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "sta_ip",
+        "label": "IP-адрес (вторичное, статический)",
+        "type": "ip",
+        "src": [
+          "pppoeInf",
+          30
+        ],
+        "show_if": [
+          "SecType",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "sta_mask",
+        "label": "Маска подсети (вторичное, статический)",
+        "type": "ip",
+        "src": [
+          "pppoeInf",
+          31
+        ],
+        "show_if": [
+          "SecType",
+          "2"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "linktype",
+        "label": "Режим подключения",
+        "type": "radio",
+        "src": [
+          "pppoeInf",
+          20
+        ],
+        "options": [
+          [
+            "1",
+            "Подключать по требованию (Connect on Demand)"
+          ],
+          [
+            "2",
+            "Подключать автоматически (Connect Automatically)"
+          ],
+          [
+            "3",
+            "По расписанию (Time-based Connecting)"
+          ],
+          [
+            "4",
+            "Подключать вручную (Connect Manually)"
+          ]
+        ],
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "waittime",
+        "label": "Макс. время простоя, мин (по требованию; 0 = всегда активно)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          21
+        ],
+        "show_if": [
+          "linktype",
+          "1"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "hour1",
+        "label": "Расписание: час начала (0-24)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          22
+        ],
+        "show_if": [
+          "linktype",
+          "3"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "minute1",
+        "label": "Расписание: минута начала (0-60)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          23
+        ],
+        "show_if": [
+          "linktype",
+          "3"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "hour2",
+        "label": "Расписание: час окончания (0-24)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          24
+        ],
+        "show_if": [
+          "linktype",
+          "3"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "minute2",
+        "label": "Расписание: минута окончания (0-60)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          25
+        ],
+        "show_if": [
+          "linktype",
+          "3"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "waittime2",
+        "label": "Макс. время простоя, мин (вручную; 0 = всегда активно)",
+        "type": "number",
+        "src": [
+          "pppoeInf",
+          21
+        ],
+        "show_if": [
+          "linktype",
+          "4"
+        ],
+        "optional": true,
+        "hidden_value": null
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    }
+  },
+  {
+    "id": "WlanAdvRpm",
+    "htm": "WlanAdvRpm.htm",
+    "section": "Беспроводной режим",
+    "title": "Дополнительные настройки беспроводной сети",
+    "kind": "form",
+    "danger": "",
+    "reboot_note": true,
+    "fields": [
+      {
+        "name": "txPower",
+        "label": "Мощность передатчика",
+        "type": "select",
+        "src": [
+          "wlanAdv",
+          0
+        ],
+        "options": [
+          [
+            "0",
+            "Высокая"
+          ],
+          [
+            "1",
+            "Средняя"
+          ],
+          [
+            "2",
+            "Низкая"
+          ]
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "beaconPeriod",
+        "label": "Интервал маяка (Beacon Interval), мс (40-1000)",
+        "type": "number",
+        "src": [
+          "wlanAdv",
+          1
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "rtsThreshold",
+        "label": "Порог RTS (RTS Threshold), байт (256-2346)",
+        "type": "number",
+        "src": [
+          "wlanAdv",
+          2
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "fragThreshold",
+        "label": "Порог фрагментации (Fragmentation Threshold), байт (256-2346)",
+        "type": "number",
+        "src": [
+          "wlanAdv",
+          3
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "dtimInterval",
+        "label": "Интервал DTIM (DTIM Interval), (1-255)",
+        "type": "number",
+        "src": [
+          "wlanAdv",
+          4
+        ],
+        "show_if": null,
+        "optional": false
+      },
+      {
+        "name": "wmm",
+        "label": "Включить WMM (WiFi Multimedia)",
+        "type": "checkbox",
+        "src": [
+          "wlanAdv",
+          5
+        ],
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true
+      },
+      {
+        "name": "shortGI",
+        "label": "Включить Short GI (короткий защитный интервал)",
+        "type": "checkbox",
+        "src": [
+          "wlanAdv",
+          6
+        ],
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true
+      },
+      {
+        "name": "apisolation",
+        "label": "Включить изоляцию точки доступа (AP Isolation)",
+        "type": "checkbox",
+        "src": [
+          "wlanAdv",
+          7
+        ],
+        "checked_value": "2",
+        "show_if": null,
+        "optional": true
+      }
+    ],
+    "save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Имя массива из HTML литерально: var wlanAdv = new Array(...). Маппинг src через промежуточные переменные: g_txPower=wlanAdv[0], g_bcPrd=wlanAdv[1], g_rtsThd=wlanAdv[2], g_fragThd=wlanAdv[3], g_dtimThd=wlanAdv[4], g_wmm=wlanAdv[5], g_shotGI=wlanAdv[6], g_apisolation=wlanAdv[7]. Внизу страницы df.X.value=g_X подтверждает источники. Чекбоксы (wmm/shortGI/apisolation) имеют атрибут value=\"2\" -> checked_value='2'; включёнными считаются когда в массиве лежит 1 (if (g_wmm==1) checked). Форма: method=get, action=WlanAdvRpm.htm, enctype=multipart/form-data, кнопка name=Save value=Save. Строка txPower (line_txpower) скрывается через display=none в рантайм-скрипте (строка 180), но поле остаётся реальным и отправляемым. Условные блокировки (только UI, на отправку не влияют): fragThreshold disabled если wlanAdv[11]==1 (режим 11n/11bgn mixed); shortGI disabled если wlanAdv[10]==1; apisolation disabled если wlanAdv[9]==1 (режим моста). Индекс wlanAdv[8]==1 -> вывод предупреждения о необходимости перезагрузки роутера (reboot_note=true). IP/логин/пароль роутера НЕ меняет — danger пуст. Add-форма отсутствует (это не list), безопасный GET ?Add=Add не выполнялся."
+  },
+  {
+    "id": "WlanMacFilterRpm",
+    "htm": "WlanMacFilterRpm.htm",
+    "section": "Беспроводной режим",
+    "title": "Фильтрация MAC-адресов (Wi-Fi)",
+    "kind": "list",
+    "danger": "",
+    "reboot_note": false,
+    "list_array": "wlanFilterList",
+    "para_array": "wlanFilterPara",
+    "count_index": 5,
+    "stride_index": 6,
+    "perpage_index": -1,
+    "page_index": 3,
+    "hasmore_index": 4,
+    "columns": [
+      {
+        "label": "MAC-адрес",
+        "index": 0,
+        "kind": "mac"
+      },
+      {
+        "label": "Статус",
+        "index": 1,
+        "kind": "status"
+      },
+      {
+        "label": "Описание",
+        "index": 4,
+        "kind": "text"
+      }
+    ],
+    "do_all": [
+      "EnAll",
+      "DisAll",
+      "DelAll"
+    ],
+    "add_fields": [
+      {
+        "name": "Mac",
+        "label": "MAC-адрес",
+        "type": "mac",
+        "src": [
+          "wlanFilterAdvPara",
+          0
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Desc",
+        "label": "Описание",
+        "type": "text",
+        "src": [
+          "wlanFilterAdvPara",
+          1
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "entryEnabled",
+        "label": "Статус",
+        "type": "select",
+        "src": [
+          "wlanFilterAdvPara",
+          4
+        ],
+        "options": [
+          [
+            "1",
+            "Включено"
+          ],
+          [
+            "0",
+            "Отключено"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": null
+      },
+      {
+        "name": "Type",
+        "label": "Привилегия (WEP)",
+        "type": "select",
+        "src": [
+          "wlanFilterAdvPara",
+          2
+        ],
+        "options": [
+          [
+            "1",
+            "allow"
+          ],
+          [
+            "2",
+            "deny"
+          ],
+          [
+            "3",
+            "64 bit"
+          ],
+          [
+            "4",
+            "128 bit"
+          ],
+          [
+            "5",
+            "152 bit"
+          ]
+        ],
+        "checked_value": null,
+        "show_if": null,
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "key",
+        "label": "WEP-ключ",
+        "type": "text",
+        "src": [
+          "wlanFilterAdvPara",
+          3
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": [
+          "Type",
+          "3"
+        ],
+        "optional": true,
+        "hidden_value": null
+      },
+      {
+        "name": "Changed",
+        "label": "Changed",
+        "type": "hidden",
+        "src": [
+          "wlanFilterAdvPara",
+          5
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": "0"
+      },
+      {
+        "name": "SelIndex",
+        "label": "SelIndex",
+        "type": "hidden",
+        "src": [
+          "wlanFilterAdvPara",
+          6
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": "0"
+      },
+      {
+        "name": "Page",
+        "label": "Page",
+        "type": "hidden",
+        "src": [
+          "wlanFilterAdvPara",
+          7
+        ],
+        "options": null,
+        "checked_value": null,
+        "show_if": null,
+        "optional": false,
+        "hidden_value": "1"
+      }
+    ],
+    "add_save_extra": {
+      "Save": "Save"
+    },
+    "special_notes": "Имена массивов берутся буквально из HTML: список записей wlanFilterList, метаданные wlanFilterPara (стр.: count=индекс5, stride=индекс6, текущая страница=индекс3, есть-ещё=индекс4, фича-флаг=индекс7). Поскольку wlanFilterPara[7]==8 на этом устройстве (WR740N), колонки Привилегия и WEP-ключ в списке СКРЫТЫ, поэтому показываются только MAC(0), Статус(1), Описание(4). В записи реально используются первые 5 полей (0..4), stride=5. Форма добавления (?Add=Add) отдаёт массив wlanFilterAdvPara и поля Mac/Desc/entryEnabled, а строки Type(Привилегия) и key(WEP) скрыты (style=display:none и wlanFilterAdvPara[8]==0), т.е. для этой модели не нужны — помечены optional. Сохранение записи: GET с Save=Save и скрытыми Changed/SelIndex/Page. Глобальные операции страницы (не в add_fields): включить/выключить фильтр целиком — ?Enfilter=1 / ?Disfilter=1; режим фильтра радио ExcludeUnlisted value=1 (Запретить перечисленные) / value=2 (Разрешить только перечисленные) шлётся как ?exclusive=0|1 через doClick; массовые операции ?DoAll=EnAll|DisAll|DelAll; удаление/правка записи ?Del=ID / ?Modify=ID. Форма GET, action=WlanMacFilterRpm.htm, enctype=multipart/form-data (на GET игнорируется). Опасности для доступа к роутеру нет: страница не меняет IP/логин/пароль и не делает сброс."
+  },
+  {
+    "id": "WpsCfgRpm",
+    "htm": "WpsCfgRpm.htm",
+    "section": "WPS",
+    "title": "Настройка WPS (Wi-Fi Protected Setup)",
+    "kind": "special",
+    "danger": "",
+    "reboot_note": true,
+    "handler": "wps",
+    "arrays": [
+      "wpsInf"
+    ],
+    "special_notes": "Страница управления WPS на TL-WR740N — кнопочная (button-driven), все действия выполняются GET-запросами на сам URL страницы, форма <FORM action=\"WpsCfgRpm.htm\" enctype=\"multipart/form-data\" method=\"get\">. Состояние читается из единственного JS-массива wpsInf = new Array(1,\"XXXXXXXX\",1,0,0,0,1,0,0): wpsInf[0]=g_wpsStatus (1=WPS включён/0=выключен), wpsInf[1]=g_wpsPIN (текущий 8-значный PIN, строка), wpsInf[2]=g_enWlan (радио Wi-Fi включено 1/0; при 0 показывается красное предупреждение и ВСЕ контролы disabled), wpsInf[3]=флаг 'требуется перезагрузка' (при 1 выводится сообщение со ссылкой на SysRebootRpm.htm), wpsInf[4]=g_wpsLockEnabled (PIN заблокирован 1/разблокирован 0 — задаёт состояние чекбокса pin_lock), wpsInf[5]=g_vapIdx (индекс виртуальной точки), wpsInf[6]=g_vapEnabled (VAP включён 1/0; при 0 все контролы disabled), wpsInf[7]/wpsInf[8]=резерв. ДЕЙСТВИЯ (точные URL, метод GET, заголовок Referer обязателен): Включить WPS — кнопка name=EnWps type=submit -> GET WpsCfgRpm.htm?EnWps=<value> (кнопка submit, шлёт name=value); Выключить WPS — name=DisWps -> WpsCfgRpm.htm?DisWps=<value>; Восстановить PIN по умолчанию — name=DefPin value='Restore PIN' -> WpsCfgRpm.htm?DefPin=Restore+PIN; Сгенерировать новый PIN — name=NewPin value='Gen New PIN' -> WpsCfgRpm.htm?NewPin=Gen+New+PIN; Добавить устройство — кнопка name=NewDev type=button onclick=doOnClick() -> location.href='/userRpm/WpsCfgRpm.htm?NewDev=value'; Блокировка PIN — чекбокс name=pin_lock, обработчик onClickPinLockCheckbox() делает location.href='/userRpm/WpsCfgRpm.htm?is_pin_locked='+(1 если отмечен, 0 если снят), т.е. блокировка/разблокировка PIN идёт ОТДЕЛЬНЫМ параметром is_pin_locked=0|1, а НЕ pin_lock=. Видимость кнопок: при g_wpsStatus==0 скрыта DisWps, а NewDev и pin_lock disabled; при g_wpsStatus==1 скрыта EnWps. Это НЕ list — таблицы записей и формы добавления (?Add=Add) на странице нет, поэтому add-GET не выполнялся. Страница НЕ меняет IP/логин/пароль роутера, не делает factory-reset и не шьёт прошивку — потери связи с роутером при действиях не будет. Нюанс безопасности: включённый WPS с 8-значным PIN — известный вектор атаки (online/offline brute-force, Pixie Dust); при сомнениях безопаснее держать WPS выключенным (DisWps).",
+    "special_actions": [
+      {
+        "label": "Включить WPS",
+        "name": "EnWps",
+        "url": "WpsCfgRpm.htm?EnWps=Enable+WPS",
+        "method": "get",
+        "visible_if": [
+          "wpsInf",
+          0,
+          "0"
+        ]
+      },
+      {
+        "label": "Выключить WPS",
+        "name": "DisWps",
+        "url": "WpsCfgRpm.htm?DisWps=Disable+WPS",
+        "method": "get",
+        "visible_if": [
+          "wpsInf",
+          0,
+          "1"
+        ]
+      },
+      {
+        "label": "Восстановить PIN по умолчанию",
+        "name": "DefPin",
+        "url": "WpsCfgRpm.htm?DefPin=Restore+PIN",
+        "method": "get",
+        "visible_if": null
+      },
+      {
+        "label": "Сгенерировать новый PIN",
+        "name": "NewPin",
+        "url": "WpsCfgRpm.htm?NewPin=Gen+New+PIN",
+        "method": "get",
+        "visible_if": null
+      },
+      {
+        "label": "Добавить новое устройство",
+        "name": "NewDev",
+        "url": "WpsCfgRpm.htm?NewDev=value",
+        "method": "get",
+        "visible_if": null
+      },
+      {
+        "label": "Заблокировать PIN устройства",
+        "name": "is_pin_locked_on",
+        "url": "WpsCfgRpm.htm?is_pin_locked=1",
+        "method": "get",
+        "visible_if": null
+      },
+      {
+        "label": "Разблокировать PIN устройства",
+        "name": "is_pin_locked_off",
+        "url": "WpsCfgRpm.htm?is_pin_locked=0",
+        "method": "get",
+        "visible_if": null
+      }
+    ],
+    "readonly_display": [
+      {
+        "label": "Статус WPS",
+        "src": [
+          "wpsInf",
+          0
+        ],
+        "kind": "status",
+        "map": {
+          "0": "Отключён",
+          "1": "Включён"
+        }
+      },
+      {
+        "label": "Текущий PIN",
+        "src": [
+          "wpsInf",
+          1
+        ],
+        "kind": "text"
+      },
+      {
+        "label": "Радио Wi-Fi включено",
+        "src": [
+          "wpsInf",
+          2
+        ],
+        "kind": "bool"
+      },
+      {
+        "label": "PIN заблокирован",
+        "src": [
+          "wpsInf",
+          4
+        ],
+        "kind": "bool"
+      }
+    ]
+  },
+  {
+    "id": "WzdStartRpm",
+    "htm": "WzdStartRpm.htm",
+    "section": "Быстрая настройка",
+    "title": "Быстрая настройка",
+    "kind": "special",
+    "danger": "",
+    "reboot_note": false,
+    "handler": "wizard",
+    "special_notes": "Стартовая (приветственная) страница мастера быстрой настройки. Только информационный текст и навигация, конфигурацию роутера не меняет. Форма: <FORM action=\"WzdStartRpm.htm\" method=get enctype=multipart/form-data> — enctype=multipart/form-data присутствует, но файловых input нет (загрузки файлов не происходит). Единственный массив в HTML: var wzdStartInf = new Array(1,1,0,0,0); индексы 2..4 — заполнение/резерв. Поля формы: (1) <INPUT type=hidden name=\"ClientId\"> — идентификатор сессии мастера, предзаполняется внизу страницы скриптом document.forms[0].ClientId.value = wzdStartInf[1] (значение 1); этот ClientId переносится через все шаги мастера. (2) <INPUT name=\"Exit\" type=button value=\"Exit\"> — НЕ сабмитит форму, вызывает JS doExit(): закрывает окно либо переходит на /userRpm/StatusRpm.htm. (3) <INPUT name=\"Next\" type=submit value=\"Next\"> — обычный submit GET на ту же страницу WzdStartRpm.htm, перевод на следующий шаг мастера. Переход «Далее»: GET http://192.168.0.1:8080/userRpm/WzdStartRpm.htm?ClientId=1&Next=Next (с обязательным заголовком Referer на MenuRpm.htm, Basic admin:admin). Никаких Save=/Del=/doAll=/Reboot=/Upgrade — страница ничего не сохраняет и не сбрасывает. Опасности нет: IP/логин/пароль роутера не трогает, сброс/прошивку не делает."
+  }
+]

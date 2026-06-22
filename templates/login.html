@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход — RouterDebugger</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="login-body">
+  <form class="login-card" method="post" action="/login" autocomplete="off">
+    <div class="login-logo">🛜</div>
+    <h1>RouterDebugger</h1>
+    <p class="muted">Панель управления роутером</p>
+    {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+    <label>Логин
+      <input type="text" name="username" required autofocus>
+    </label>
+    <label>Пароль
+      <input type="password" name="password" required>
+    </label>
+    <button type="submit" class="btn btn-primary">Войти</button>
+  </form>
+</body>
+</html>
