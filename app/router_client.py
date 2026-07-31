@@ -156,6 +156,39 @@ STA_STATUS = [
     "802.1X", "STA-JOINED", "AP-UP", "AP-DOWN", "Отключён",
 ]
 PROTO = {1: "ALL", 2: "TCP", 3: "UDP"}
+
+
+def normalize_port_expression(value: Any, *, allow_list: bool = False,
+                              allow_range: bool = True) -> str:
+    """Проверяет и нормализует порт, диапазон или список диапазонов.
+
+    Роутер принимает диапазоны как ``1000-1010``, а Port Triggering также
+    допускает список через запятую.  Проверяем это до отправки запроса, чтобы
+    не полагаться на неочевидные ошибки старой прошивки.
+    """
+    expression = str(value).strip().replace(" ", "").replace("–", "-").replace("—", "-")
+    if not expression:
+        raise ValueError("порт не указан")
+
+    parts = expression.split(",")
+    if not allow_list and len(parts) != 1:
+        raise ValueError("допустим только один порт или один диапазон")
+
+    normalized: list[str] = []
+    for part in parts:
+        match = re.fullmatch(r"(\d{1,5})(?:-(\d{1,5}))?", part)
+        if not match:
+            raise ValueError(f"некорректный порт или диапазон: {part or expression}")
+        start = int(match.group(1))
+        end = int(match.group(2) or start)
+        if not 1 <= start <= 65535 or not 1 <= end <= 65535:
+            raise ValueError("порт должен быть от 1 до 65535")
+        if end < start:
+            raise ValueError("конец диапазона не может быть меньше начала")
+        if end != start and not allow_range:
+            raise ValueError("для этого поля допустим только один порт")
+        normalized.append(str(start) if start == end else f"{start}-{end}")
+    return ",".join(normalized)
 SEC_TYPE = {0: "Без защиты", 1: "WEP", 2: "WPA/WPA2-Enterprise", 3: "WPA/WPA2-Personal"}
 
 
@@ -272,12 +305,17 @@ class RouterClient:
             })
         return out
 
-    async def get_virtual_servers(self) -> list[dict[str, Any]]:
-        t = await self._get("/userRpm/VirtualServerRpm.htm")
+    async def get_virtual_servers(self, page: int = 1) -> dict[str, Any]:
+        page = max(1, int(page))
+        params = {"Page": page} if page > 1 else None
+        t = await self._get("/userRpm/VirtualServerRpm.htm", params)
         para = parse_js_array(t, "virServerPara") or []
         lst = parse_js_array(t, "virServerListPara") or []
         count = int(para[2]) if len(para) > 2 else 0
         stride = int(para[3]) if len(para) > 3 else 7
+        current_page = int(para[0]) if para else page
+        has_more = bool(para[1]) if len(para) > 1 else False
+        per_page = int(para[4]) if len(para) > 4 else 8
         out = []
         for i in range(count):
             r = i * stride
@@ -286,7 +324,7 @@ class RouterClient:
             ext_a, ext_b = lst[r], lst[r + 1]
             int_a, int_b = lst[r + 2], lst[r + 3]
             out.append({
-                "id": i,  # 0-based индекс — используется для Modify/Del
+                "id": (current_page - 1) * per_page + i,
                 "service_port": _s(ext_a) if ext_a == ext_b else f"{ext_a}-{ext_b}",
                 "internal_port": _s(int_a) if int_a == int_b else f"{int_a}-{int_b}",
                 "ext_port": ext_a,
@@ -296,7 +334,12 @@ class RouterClient:
                 "protocol_code": lst[r + 5],
                 "enabled": lst[r + 6] == 1,
             })
-        return out
+        return {
+            "items": out,
+            "page": current_page,
+            "has_more": has_more,
+            "per_page": per_page,
+        }
 
     async def get_dhcp_settings(self) -> dict[str, Any]:
         t = await self._get("/userRpm/LanDhcpServerRpm.htm")
@@ -366,23 +409,29 @@ class RouterClient:
     async def reboot(self) -> None:
         await self._get("/userRpm/SysRebootRpm.htm", {"Reboot": "Reboot"})
 
-    async def vs_add(self, ext_port: int, int_port: int, ip: str,
-                     protocol: int = 1, state: int = 1) -> None:
+    async def vs_add(self, ext_port: str | int, int_port: str | int, ip: str,
+                     protocol: int = 1, state: int = 1, page: int = 1) -> None:
+        ext_port = normalize_port_expression(ext_port)
+        int_port = normalize_port_expression(int_port)
         await self._get("/userRpm/VirtualServerRpm.htm", {
             "ExPort": ext_port, "InPort": int_port, "Ip": ip,
             "Protocol": protocol, "State": state,
             "Commonport": 0, "Changed": 0, "SelIndex": 0,
-            "Page": 1, "Save": "Save",
+            "Page": max(1, int(page)), "Save": "Save",
         })
 
-    async def vs_delete(self, entry_id: int) -> None:
-        await self._get("/userRpm/VirtualServerRpm.htm", {"Del": entry_id, "Page": 1})
+    async def vs_delete(self, entry_id: int, page: int = 1) -> None:
+        await self._get("/userRpm/VirtualServerRpm.htm", {
+            "Del": entry_id, "Page": max(1, int(page)),
+        })
 
-    async def vs_do_all(self, action: str) -> None:
+    async def vs_do_all(self, action: str, page: int = 1) -> None:
         # action: EnAll | DisAll | DelAll
         if action not in ("EnAll", "DisAll", "DelAll"):
             raise RouterError("Недопустимое действие для проброса портов")
-        await self._get("/userRpm/VirtualServerRpm.htm", {"doAll": action, "Page": 1})
+        await self._get("/userRpm/VirtualServerRpm.htm", {
+            "doAll": action, "Page": max(1, int(page)),
+        })
 
     async def dhcp_save(self, enabled: bool, start_ip: str, end_ip: str, lease: str,
                         gateway: str = "", domain: str = "",

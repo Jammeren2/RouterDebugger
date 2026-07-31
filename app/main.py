@@ -16,7 +16,7 @@ from .config import settings
 from .pagespec import MENU
 from .registry import REGISTRY
 from .registry import get as get_spec
-from .router_client import RouterClient, RouterError
+from .router_client import RouterClient, RouterError, normalize_port_expression
 from .security import (
     client_key,
     get_csrf,
@@ -150,9 +150,10 @@ async def api_devices(_: str = Depends(require_user), r: RouterClient = Depends(
 
 
 @app.get("/api/portforward")
-async def api_portforward(_: str = Depends(require_user), r: RouterClient = Depends(get_router)):
+async def api_portforward(page: int = 1, _: str = Depends(require_user),
+                          r: RouterClient = Depends(get_router)):
     try:
-        return {"ok": True, "data": await r.get_virtual_servers()}
+        return {"ok": True, "data": await r.get_virtual_servers(max(1, page))}
     except RouterError as e:
         return _err(e)
 
@@ -196,12 +197,15 @@ async def api_pf_add(request: Request, _: str = Depends(require_user),
     require_csrf(request)
     body = await request.json()
     try:
+        ext_port = normalize_port_expression(body["ext_port"])
+        int_port = normalize_port_expression(body.get("int_port") or ext_port)
         await r.vs_add(
-            ext_port=int(body["ext_port"]),
-            int_port=int(body.get("int_port") or body["ext_port"]),
+            ext_port=ext_port,
+            int_port=int_port,
             ip=str(body["ip"]).strip(),
             protocol=int(body.get("protocol", 1)),
             state=1 if body.get("enabled", True) else 0,
+            page=max(1, int(body.get("page", 1))),
         )
         return {"ok": True}
     except (KeyError, ValueError) as e:
@@ -216,7 +220,7 @@ async def api_pf_delete(request: Request, _: str = Depends(require_user),
     require_csrf(request)
     body = await request.json()
     try:
-        await r.vs_delete(int(body["id"]))
+        await r.vs_delete(int(body["id"]), max(1, int(body.get("page", 1))))
         return {"ok": True}
     except (KeyError, ValueError) as e:
         raise HTTPException(status_code=400, detail=f"Некорректные данные: {e}")
@@ -231,8 +235,10 @@ async def api_pf_all(request: Request, _: str = Depends(require_user),
     body = await request.json()
     action = body.get("action", "")
     try:
-        await r.vs_do_all(action)
+        await r.vs_do_all(action, max(1, int(body.get("page", 1))))
         return {"ok": True}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Некорректные данные: {e}")
     except RouterError as e:
         return _err(e)
 
@@ -391,11 +397,19 @@ async def api_page_list(page_id: str, op: str, request: Request, _: str = Depend
     spec = get_spec(page_id)
     if not spec or spec.kind != "list":
         raise HTTPException(status_code=400, detail="Страница не является списком")
-    body = await request.json()
-    page = int(body.get("page", 1))
     try:
+        body = await request.json()
+        page = max(1, int(body.get("page", 1)))
         if op == "add":
-            await engine.list_add(r, spec, body.get("values", {}), page)
+            values = dict(body.get("values", {}))
+            if page_id == "SpecialAppRpm":
+                values["trPort"] = normalize_port_expression(
+                    values.get("trPort", ""), allow_range=False,
+                )
+                values["inPort"] = normalize_port_expression(
+                    values.get("inPort", ""), allow_list=True,
+                )
+            await engine.list_add(r, spec, values, page)
         elif op == "delete":
             await engine.list_delete(r, spec, int(body["id"]), page)
         elif op == "doall":

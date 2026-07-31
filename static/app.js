@@ -83,20 +83,20 @@ function selectPage(meta) {
   route(meta);
 }
 
-async function route(meta) {
+async function route(meta, page = 1) {
   const el = content(); loading(el);
   try {
     if (meta.kind === "raw") return renderRaw(el);
-    if (meta.kind === "custom") return CUSTOM[meta.handler](el, meta);
-    const { data } = await api(`/api/page/${meta.id}`);
+    if (meta.kind === "custom") return CUSTOM[meta.handler](el, meta, page);
+    const { data } = await api(`/api/page/${meta.id}?page=${encodeURIComponent(page)}`);
     if (data.kind === "form") return renderForm(el, data);
     if (data.kind === "list") return renderList(el, data);
     if (data.kind === "readonly") return renderReadonly(el, data);
     if (data.kind === "special") return SPECIAL[data.handler] ? SPECIAL[data.handler](el, data) : renderUnknown(el, data);
     renderUnknown(el, data);
-  } catch (e) { el.innerHTML = pageHeader(meta) + `<div class="alert error">${esc(e.message)}</div>`; bindRefresh(meta); }
+  } catch (e) { el.innerHTML = pageHeader(meta) + `<div class="alert error">${esc(e.message)}</div>`; bindRefresh(meta, page); }
 }
-function bindRefresh(meta) { const b = $("#pg-refresh"); if (b) b.addEventListener("click", () => route(meta)); }
+function bindRefresh(meta, page = 1) { const b = $("#pg-refresh"); if (b) b.addEventListener("click", () => route(meta, page)); }
 
 // ---- generic form ----------------------------------------------------------
 function inputHTML(f) {
@@ -172,12 +172,22 @@ function cellHTML(c) {
   }
   return esc(c.value);
 }
+function paginationHTML(page, hasMore, attr) {
+  page = Number(page) || 1;
+  if (page <= 1 && !hasMore) return "";
+  return `<div class="pagination">
+    <button class="btn btn-sm" ${page <= 1 ? "disabled" : ""} ${attr}="${page - 1}">← Назад</button>
+    <span class="muted">Страница ${page}</span>
+    <button class="btn btn-sm" ${!hasMore ? "disabled" : ""} ${attr}="${page + 1}">Вперёд →</button>
+  </div>`;
+}
 function renderList(el, d) {
   let head = d.columns.map(c => `<th>${esc(c.label)}</th>`).join("");
   let rows = d.rows.map(r => `<tr>${r.cells.map(cellHTML).map(x => `<td>${x}</td>`).join("")}
       <td><button class="btn btn-danger btn-sm" data-del="${r.id}">Удалить</button></td></tr>`).join("");
   if (!rows) rows = `<tr><td colspan="${d.columns.length + 1}" class="muted">Записей нет</td></tr>`;
-  let html = pageHeader(d) + `<table><thead><tr>${head}<th></th></tr></thead><tbody>${rows}</tbody></table>`;
+  let html = pageHeader(d) + `<div class="table-scroll"><table><thead><tr>${head}<th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  html += paginationHTML(d.page, d.has_more, "data-list-page");
   if (d.do_all && d.do_all.length) {
     const map = { EnAll: "Включить все", DisAll: "Выключить все", DelAll: "Удалить все" };
     html += `<div class="row-actions">` + d.do_all.map(a =>
@@ -189,23 +199,24 @@ function renderList(el, d) {
       <div class="row-actions"><button class="btn btn-primary" id="add-btn">Добавить</button></div></div>`;
   }
   el.innerHTML = html;
-  bindRefresh(d);
+  bindRefresh(active, d.page);
+  $$('[data-list-page]:not([disabled])').forEach(b => b.addEventListener("click", () => route(active, Number(b.dataset.listPage))));
   $$("[data-del]").forEach(b => b.addEventListener("click", async () => {
     if (!confirm("Удалить запись?")) return;
     try { await api(`/api/page/${d.id}/list/delete`, { method: "POST", body: { id: Number(b.dataset.del), page: d.page } });
-      toast("Удалено"); route(active); } catch (e) { toast(e.message, "err"); }
+      toast("Удалено"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
   }));
   $$("[data-all]").forEach(b => b.addEventListener("click", async () => {
     if (b.dataset.all === "DelAll" && !confirm("Удалить ВСЕ записи?")) return;
     try { await api(`/api/page/${d.id}/list/doall`, { method: "POST", body: { action: b.dataset.all, page: d.page } });
-      toast("Готово"); route(active); } catch (e) { toast(e.message, "err"); }
+      toast("Готово"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
   }));
   if (d.can_add) {
     const add = $("#add"); applyShowIf(add, d.add_fields);
     add.addEventListener("change", () => applyShowIf(add, d.add_fields));
     $("#add-btn").addEventListener("click", async () => {
       try { await api(`/api/page/${d.id}/list/add`, { method: "POST", body: { values: collectValues(add, d.add_fields), page: d.page } });
-        toast("Добавлено"); route(active); } catch (e) { toast(e.message, "err"); }
+        toast("Добавлено"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
     });
   }
 }
@@ -410,37 +421,40 @@ const CUSTOM = {
     } catch (e) { el.innerHTML = `<div class="alert error">${esc(e.message)}</div>`; }
   },
 
-  async portforward(el) {
+  async portforward(el, _meta, page = 1) {
     loading(el);
     try {
-      const { data: list } = await api("/api/portforward");
+      const { data } = await api(`/api/portforward?page=${encodeURIComponent(page)}`);
+      const list = data.items || [];
       let rows = list.map(v => `<tr><td>${esc(v.service_port)}</td><td>${esc(v.internal_port)}</td><td class="mono">${esc(v.ip)}</td><td>${esc(v.protocol)}</td>
         <td><span class="badge ${v.enabled ? "on" : "off"}">${v.enabled ? "вкл" : "выкл"}</span></td>
         <td><button class="btn btn-danger btn-sm" data-del="${v.id}">Удалить</button></td></tr>`).join("");
       if (!rows) rows = '<tr><td colspan="6" class="muted">Правил нет</td></tr>';
       el.innerHTML = `<div class="panel-head"><h2>Виртуальные серверы (проброс портов)</h2><button class="btn btn-ghost" id="pg-refresh">↻ Обновить</button></div>
-        <table><thead><tr><th>Внешний порт</th><th>Внутр. порт</th><th>IP</th><th>Протокол</th><th>Статус</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+        <div class="table-scroll"><table><thead><tr><th>Внешний порт</th><th>Внутр. порт</th><th>IP</th><th>Протокол</th><th>Статус</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+        ${paginationHTML(data.page, data.has_more, "data-pf-page")}
         <div class="subcard"><h3>Добавить правило</h3><div class="form-grid">
-          <div class="field-row"><label>Внешний порт</label><input id="pf-ext" type="number"></div>
-          <div class="field-row"><label>Внутренний порт</label><input id="pf-int" type="number" placeholder="как внешний"></div>
+          <div class="field-row"><label>Внешний порт или диапазон</label><input id="pf-ext" placeholder="8080 или 8000-8010"></div>
+          <div class="field-row"><label>Внутренний порт или диапазон</label><input id="pf-int" placeholder="как внешний"></div>
           <div class="field-row"><label>IP устройства</label><input id="pf-ip" placeholder="192.168.0.100"></div>
           <div class="field-row"><label>Протокол</label><select id="pf-proto"><option value="1">ALL</option><option value="2">TCP</option><option value="3">UDP</option></select></div>
         </div><div class="row-actions"><button class="btn btn-primary" id="pf-add">Добавить</button></div></div>
         <div class="row-actions"><button class="btn" data-pfall="EnAll">Включить все</button><button class="btn" data-pfall="DisAll">Выключить все</button><button class="btn btn-danger" data-pfall="DelAll">Удалить все</button></div>`;
-      bindRefresh(active);
+      bindRefresh(active, data.page);
+      $$('[data-pf-page]:not([disabled])').forEach(b => b.addEventListener("click", () => CUSTOM.portforward(el, active, Number(b.dataset.pfPage))));
       $$("[data-del]").forEach(b => b.addEventListener("click", async () => {
         if (!confirm("Удалить правило?")) return;
-        try { await api("/api/portforward/delete", { method: "POST", body: { id: Number(b.dataset.del) } }); toast("Удалено"); CUSTOM.portforward(el); } catch (e) { toast(e.message, "err"); }
+        try { await api("/api/portforward/delete", { method: "POST", body: { id: Number(b.dataset.del), page: data.page } }); toast("Удалено"); CUSTOM.portforward(el, active, data.page); } catch (e) { toast(e.message, "err"); }
       }));
       $("#pf-add").addEventListener("click", async () => {
         const ext = $("#pf-ext").value.trim(), ip = $("#pf-ip").value.trim();
         if (!ext || !ip) { toast("Заполни внешний порт и IP", "err"); return; }
-        try { await api("/api/portforward/add", { method: "POST", body: { ext_port: +ext, int_port: $("#pf-int").value.trim() || +ext, ip, protocol: +$("#pf-proto").value, enabled: true } });
-          toast("Добавлено"); CUSTOM.portforward(el); } catch (e) { toast(e.message, "err"); }
+        try { await api("/api/portforward/add", { method: "POST", body: { ext_port: ext, int_port: $("#pf-int").value.trim() || ext, ip, protocol: +$("#pf-proto").value, enabled: true, page: data.page } });
+          toast("Добавлено"); CUSTOM.portforward(el, active, data.page); } catch (e) { toast(e.message, "err"); }
       });
       $$("[data-pfall]").forEach(b => b.addEventListener("click", async () => {
         if (b.dataset.pfall === "DelAll" && !confirm("Удалить ВСЕ правила?")) return;
-        try { await api("/api/portforward/all", { method: "POST", body: { action: b.dataset.pfall } }); toast("Готово"); CUSTOM.portforward(el); } catch (e) { toast(e.message, "err"); }
+        try { await api("/api/portforward/all", { method: "POST", body: { action: b.dataset.pfall, page: data.page } }); toast("Готово"); CUSTOM.portforward(el, active, data.page); } catch (e) { toast(e.message, "err"); }
       }));
     } catch (e) { el.innerHTML = `<div class="alert error">${esc(e.message)}</div>`; }
   },
