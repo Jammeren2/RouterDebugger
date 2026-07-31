@@ -407,9 +407,18 @@ async def api_page_list(page_id: str, op: str, request: Request, _: str = Depend
                     values.get("trPort", ""), allow_range=False,
                 )
                 values["inPort"] = normalize_port_expression(
-                    values.get("inPort", ""), allow_list=True,
+                    values.get("inPort", ""), allow_list=True, max_length=64,
                 )
-            await engine.list_add(r, spec, values, page)
+                await r.port_trigger_add(
+                    tr_port=values["trPort"],
+                    incoming_ports=values["inPort"],
+                    tr_protocol=int(values.get("trProtocol", 1)),
+                    in_protocol=int(values.get("inProtocol", 1)),
+                    state=int(values.get("State", 1)),
+                    page=page,
+                )
+            else:
+                await engine.list_add(r, spec, values, page)
         elif op == "delete":
             await engine.list_delete(r, spec, int(body["id"]), page)
         elif op == "doall":

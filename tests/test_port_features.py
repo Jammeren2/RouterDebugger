@@ -2,7 +2,7 @@ import unittest
 
 from app.engine import parse_list
 from app.registry import REGISTRY
-from app.router_client import RouterClient, normalize_port_expression
+from app.router_client import RouterClient, RouterError, normalize_port_expression
 
 
 class PortExpressionTests(unittest.TestCase):
@@ -23,6 +23,8 @@ class PortExpressionTests(unittest.TestCase):
                 normalize_port_expression(value, allow_list=True)
         with self.assertRaises(ValueError):
             normalize_port_expression("1000-1001", allow_range=False)
+        with self.assertRaises(ValueError):
+            normalize_port_expression("1,2,3", allow_list=True, max_length=4)
 
 
 class VirtualServerPaginationTests(unittest.IsolatedAsyncioTestCase):
@@ -82,6 +84,57 @@ class PortTriggeringPaginationTests(unittest.TestCase):
         self.assertFalse(result["has_more"])
         self.assertEqual(result["rows"][0]["id"], 8)
         self.assertEqual(result["rows"][0]["cells"][2]["value"], "6970-6999")
+
+
+class PortTriggeringSaveTests(unittest.IsolatedAsyncioTestCase):
+    async def test_native_add_state_is_loaded_before_exact_save_request(self):
+        client = RouterClient.__new__(RouterClient)
+        calls = []
+        add_html = """
+        <script>var specappEditInf = new Array(0,1,"",1,1,0,0,2,0,0);</script>
+        """
+
+        async def fake_get(path, params=None):
+            calls.append((path, params))
+            return add_html if len(calls) == 1 else ""
+
+        client._get = fake_get
+        await client.port_trigger_add(
+            554, "6970-6999", tr_protocol=2, in_protocol=3, state=1, page=2,
+        )
+
+        self.assertEqual(calls[0], (
+            "/userRpm/SpecialAppRpm.htm", {"Add": "Add", "Page": 2},
+        ))
+        self.assertEqual(calls[1], (
+            "/userRpm/SpecialAppRpm.htm",
+            {
+                "trPort": "554",
+                "trProtocol": 2,
+                "inPort": "6970-6999",
+                "inProtocol": 3,
+                "State": 1,
+                "Commonapp": 0,
+                "Changed": 0,
+                "SelIndex": 0,
+                "Page": 2,
+                "Save": "Save",
+            },
+        ))
+
+    async def test_save_is_not_sent_without_native_form_state(self):
+        client = RouterClient.__new__(RouterClient)
+        calls = []
+
+        async def fake_get(path, params=None):
+            calls.append((path, params))
+            return "<html>unexpected response</html>"
+
+        client._get = fake_get
+        with self.assertRaises(RouterError):
+            await client.port_trigger_add(554, "6970-6999")
+
+        self.assertEqual(len(calls), 1)
 
 
 if __name__ == "__main__":

@@ -159,7 +159,8 @@ PROTO = {1: "ALL", 2: "TCP", 3: "UDP"}
 
 
 def normalize_port_expression(value: Any, *, allow_list: bool = False,
-                              allow_range: bool = True) -> str:
+                              allow_range: bool = True,
+                              max_length: int | None = None) -> str:
     """Проверяет и нормализует порт, диапазон или список диапазонов.
 
     Роутер принимает диапазоны как ``1000-1010``, а Port Triggering также
@@ -188,7 +189,10 @@ def normalize_port_expression(value: Any, *, allow_list: bool = False,
         if end != start and not allow_range:
             raise ValueError("для этого поля допустим только один порт")
         normalized.append(str(start) if start == end else f"{start}-{end}")
-    return ",".join(normalized)
+    result = ",".join(normalized)
+    if max_length is not None and len(result) > max_length:
+        raise ValueError(f"список портов длиннее {max_length} символов")
+    return result
 SEC_TYPE = {0: "Без защиты", 1: "WEP", 2: "WPA/WPA2-Enterprise", 3: "WPA/WPA2-Personal"}
 
 
@@ -431,6 +435,64 @@ class RouterClient:
             raise RouterError("Недопустимое действие для проброса портов")
         await self._get("/userRpm/VirtualServerRpm.htm", {
             "doAll": action, "Page": max(1, int(page)),
+        })
+
+    async def port_trigger_add(self, tr_port: str | int, incoming_ports: str,
+                               tr_protocol: int = 1, in_protocol: int = 1,
+                               state: int = 1, page: int = 1) -> None:
+        """Добавляет Port Triggering, повторяя штатный двухшаговый сценарий.
+
+        Старая прошивка сначала формирует служебное состояние по ``Add=Add``,
+        а затем ожидает его поля в запросе ``Save``. Пустые Changed/SelIndex
+        способны оставить веб-интерфейс роутера в нерабочем состоянии.
+        """
+        tr_port = normalize_port_expression(tr_port, allow_range=False)
+        incoming_ports = normalize_port_expression(
+            incoming_ports, allow_list=True, max_length=64,
+        )
+        tr_protocol = int(tr_protocol)
+        in_protocol = int(in_protocol)
+        state = int(state)
+        page = max(1, int(page))
+        if tr_protocol not in (1, 2, 3) or in_protocol not in (1, 2, 3):
+            raise ValueError("неизвестный протокол")
+        if state not in (0, 1):
+            raise ValueError("неизвестное состояние правила")
+
+        add_html = await self._get(
+            "/userRpm/SpecialAppRpm.htm", {"Add": "Add", "Page": page},
+        )
+        edit = parse_js_array(add_html, "specappEditInf") or []
+        if len(edit) < 8:
+            raise RouterError(
+                "Роутер не вернул служебное состояние формы Port Triggering; "
+                "сохранение отменено для безопасности"
+            )
+        try:
+            changed = int(edit[5])
+            selected_index = int(edit[6])
+            form_page = int(edit[7])
+        except (TypeError, ValueError) as e:
+            raise RouterError(
+                "Роутер вернул некорректное состояние формы Port Triggering; "
+                "сохранение отменено для безопасности"
+            ) from e
+        if changed != 0 or selected_index != 0 or form_page < 1:
+            raise RouterError(
+                "Роутер вернул неожиданное состояние новой записи Port Triggering; "
+                "сохранение отменено для безопасности"
+            )
+        await self._get("/userRpm/SpecialAppRpm.htm", {
+            "trPort": tr_port,
+            "trProtocol": tr_protocol,
+            "inPort": incoming_ports,
+            "inProtocol": in_protocol,
+            "State": state,
+            "Commonapp": 0,
+            "Changed": changed,
+            "SelIndex": selected_index,
+            "Page": form_page,
+            "Save": "Save",
         })
 
     async def dhcp_save(self, enabled: bool, start_ip: str, end_ip: str, lease: str,

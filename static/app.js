@@ -213,10 +213,21 @@ function renderList(el, d) {
   }));
   if (d.can_add) {
     const add = $("#add"); applyShowIf(add, d.add_fields);
+    if (d.id === "SpecialAppRpm") {
+      const triggerPort = add.querySelector('[name="trPort"]');
+      const incomingPorts = add.querySelector('[name="inPort"]');
+      const state = add.querySelector('[name="State"]');
+      if (triggerPort) { triggerPort.min = "1"; triggerPort.max = "65535"; }
+      if (incomingPorts) incomingPorts.maxLength = 64;
+      if (state) state.value = "1";
+    }
     add.addEventListener("change", () => applyShowIf(add, d.add_fields));
-    $("#add-btn").addEventListener("click", async () => {
+    const addButton = $("#add-btn");
+    addButton.addEventListener("click", async () => {
+      addButton.disabled = true;
       try { await api(`/api/page/${d.id}/list/add`, { method: "POST", body: { values: collectValues(add, d.add_fields), page: d.page } });
         toast("Добавлено"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
+      finally { addButton.disabled = false; }
     });
   }
 }
