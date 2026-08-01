@@ -181,6 +181,19 @@ function paginationHTML(page, hasMore, attr) {
     <button class="btn btn-sm" ${!hasMore ? "disabled" : ""} ${attr}="${page + 1}">Вперёд →</button>
   </div>`;
 }
+function portExpressionCount(value) {
+  const expression = String(value || "").replace(/[–—]/g, "-").replace(/\s/g, "");
+  if (!expression) return 0;
+  const ports = new Set();
+  for (const part of expression.split(",")) {
+    const match = part.match(/^(\d+)(?:-(\d+))?$/);
+    if (!match) return 0;
+    const start = Number(match[1]), end = Number(match[2] || match[1]);
+    if (end < start) return 0;
+    for (let port = start; port <= end; port++) ports.add(port);
+  }
+  return ports.size;
+}
 function renderList(el, d) {
   let head = d.columns.map(c => `<th>${esc(c.label)}</th>`).join("");
   let rows = d.rows.map(r => `<tr>${r.cells.map(cellHTML).map(x => `<td>${x}</td>`).join("")}
@@ -194,7 +207,9 @@ function renderList(el, d) {
       `<button class="btn ${a === "DelAll" ? "btn-danger" : ""}" data-all="${a}">${map[a] || a}</button>`).join("") + `</div>`;
   }
   if (d.can_add) {
-    html += `<div class="subcard"><h3>Добавить запись</h3>
+    const rangeNote = d.id === "SpecialAppRpm"
+      ? `<div class="alert info">Диапазон будет добавлен как отдельное правило для каждого входящего порта.</div>` : "";
+    html += `<div class="subcard"><h3>Добавить запись</h3>${rangeNote}
       <div class="form-grid" id="add">${d.add_fields.map(fieldRow).join("")}</div>
       <div class="row-actions"><button class="btn btn-primary" id="add-btn">Добавить</button></div></div>`;
   }
@@ -224,9 +239,13 @@ function renderList(el, d) {
     add.addEventListener("change", () => applyShowIf(add, d.add_fields));
     const addButton = $("#add-btn");
     addButton.addEventListener("click", async () => {
+      const values = collectValues(add, d.add_fields);
+      const count = d.id === "SpecialAppRpm" ? portExpressionCount(values.inPort) : 1;
+      if (count > 64) { toast("За один раз можно добавить не более 64 портов", "err"); return; }
+      if (count > 1 && !confirm(`Будет создано ${count} отдельных правил. Продолжить?`)) return;
       addButton.disabled = true;
-      try { await api(`/api/page/${d.id}/list/add`, { method: "POST", body: { values: collectValues(add, d.add_fields), page: d.page } });
-        toast("Добавлено"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
+      try { const result = await api(`/api/page/${d.id}/list/add`, { method: "POST", body: { values, page: d.page } });
+        toast(result.added > 1 ? `Добавлено правил: ${result.added}` : "Добавлено"); route(active, d.page); } catch (e) { toast(e.message, "err"); }
       finally { addButton.disabled = false; }
     });
   }
@@ -444,7 +463,8 @@ const CUSTOM = {
       el.innerHTML = `<div class="panel-head"><h2>Виртуальные серверы (проброс портов)</h2><button class="btn btn-ghost" id="pg-refresh">↻ Обновить</button></div>
         <div class="table-scroll"><table><thead><tr><th>Внешний порт</th><th>Внутр. порт</th><th>IP</th><th>Протокол</th><th>Статус</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
         ${paginationHTML(data.page, data.has_more, "data-pf-page")}
-        <div class="subcard"><h3>Добавить правило</h3><div class="form-grid">
+        <div class="subcard"><h3>Добавить правило</h3>
+          <div class="alert info">Диапазон будет добавлен как отдельное правило для каждого порта.</div><div class="form-grid">
           <div class="field-row"><label>Внешний порт или диапазон</label><input id="pf-ext" placeholder="8080 или 8000-8010"></div>
           <div class="field-row"><label>Внутренний порт или диапазон</label><input id="pf-int" placeholder="как внешний"></div>
           <div class="field-row"><label>IP устройства</label><input id="pf-ip" placeholder="192.168.0.100"></div>
@@ -460,8 +480,13 @@ const CUSTOM = {
       $("#pf-add").addEventListener("click", async () => {
         const ext = $("#pf-ext").value.trim(), ip = $("#pf-ip").value.trim();
         if (!ext || !ip) { toast("Заполни внешний порт и IP", "err"); return; }
-        try { await api("/api/portforward/add", { method: "POST", body: { ext_port: ext, int_port: $("#pf-int").value.trim() || ext, ip, protocol: +$("#pf-proto").value, enabled: true, page: data.page } });
-          toast("Добавлено"); CUSTOM.portforward(el, active, data.page); } catch (e) { toast(e.message, "err"); }
+        const count = portExpressionCount(ext);
+        if (count > 64) { toast("За один раз можно добавить не более 64 портов", "err"); return; }
+        if (count > 1 && !confirm(`Будет создано ${count} отдельных правил. Продолжить?`)) return;
+        const button = $("#pf-add"); button.disabled = true;
+        try { const result = await api("/api/portforward/add", { method: "POST", body: { ext_port: ext, int_port: $("#pf-int").value.trim() || ext, ip, protocol: +$("#pf-proto").value, enabled: true, page: data.page } });
+          toast(result.added > 1 ? `Добавлено правил: ${result.added}` : "Добавлено"); CUSTOM.portforward(el, active, data.page); } catch (e) { toast(e.message, "err"); }
+        finally { button.disabled = false; }
       });
       $$("[data-pfall]").forEach(b => b.addEventListener("click", async () => {
         if (b.dataset.pfall === "DelAll" && !confirm("Удалить ВСЕ правила?")) return;

@@ -161,12 +161,7 @@ PROTO = {1: "ALL", 2: "TCP", 3: "UDP"}
 def normalize_port_expression(value: Any, *, allow_list: bool = False,
                               allow_range: bool = True,
                               max_length: int | None = None) -> str:
-    """Проверяет и нормализует порт, диапазон или список диапазонов.
-
-    Роутер принимает диапазоны как ``1000-1010``, а Port Triggering также
-    допускает список через запятую.  Проверяем это до отправки запроса, чтобы
-    не полагаться на неочевидные ошибки старой прошивки.
-    """
+    """Проверяет пользовательскую запись порта/диапазона/списка."""
     expression = str(value).strip().replace(" ", "").replace("–", "-").replace("—", "-")
     if not expression:
         raise ValueError("порт не указан")
@@ -193,6 +188,33 @@ def normalize_port_expression(value: Any, *, allow_list: bool = False,
     if max_length is not None and len(result) > max_length:
         raise ValueError(f"список портов длиннее {max_length} символов")
     return result
+
+
+def expand_port_expression(value: Any, *, allow_list: bool = False,
+                           max_ports: int = 64,
+                           max_length: int | None = None) -> list[int]:
+    """Разворачивает запись ``80,443,8000-8002`` в отдельные порты."""
+    expression = normalize_port_expression(
+        value, allow_list=allow_list, max_length=max_length,
+    )
+    ports: list[int] = []
+    seen: set[int] = set()
+    for part in expression.split(","):
+        bounds = part.split("-", 1)
+        start = int(bounds[0])
+        end = int(bounds[1]) if len(bounds) == 2 else start
+        for port in range(start, end + 1):
+            if port in seen:
+                continue
+            seen.add(port)
+            ports.append(port)
+            if len(ports) > max_ports:
+                raise ValueError(
+                    f"за один раз можно добавить не более {max_ports} портов"
+                )
+    return ports
+
+
 SEC_TYPE = {0: "Без защиты", 1: "WEP", 2: "WPA/WPA2-Enterprise", 3: "WPA/WPA2-Personal"}
 
 
@@ -414,15 +436,32 @@ class RouterClient:
         await self._get("/userRpm/SysRebootRpm.htm", {"Reboot": "Reboot"})
 
     async def vs_add(self, ext_port: str | int, int_port: str | int, ip: str,
-                     protocol: int = 1, state: int = 1, page: int = 1) -> None:
-        ext_port = normalize_port_expression(ext_port)
-        int_port = normalize_port_expression(int_port)
-        await self._get("/userRpm/VirtualServerRpm.htm", {
-            "ExPort": ext_port, "InPort": int_port, "Ip": ip,
-            "Protocol": protocol, "State": state,
-            "Commonport": 0, "Changed": 0, "SelIndex": 0,
-            "Page": max(1, int(page)), "Save": "Save",
-        })
+                     protocol: int = 1, state: int = 1, page: int = 1) -> int:
+        external_ports = expand_port_expression(ext_port)
+        internal_ports = expand_port_expression(int_port)
+        if len(external_ports) != len(internal_ports):
+            raise ValueError(
+                "внешний и внутренний диапазоны должны содержать одинаковое число портов"
+            )
+        page = max(1, int(page))
+        added = 0
+        for external, internal in zip(external_ports, internal_ports):
+            try:
+                await self._get("/userRpm/VirtualServerRpm.htm", {
+                    "ExPort": external, "InPort": internal, "Ip": ip,
+                    "Protocol": protocol, "State": state,
+                    "Commonport": 0, "Changed": 0, "SelIndex": 0,
+                    "Page": page, "Save": "Save",
+                })
+                added += 1
+            except RouterError as e:
+                if added:
+                    raise RouterError(
+                        f"Добавлено {added} из {len(external_ports)} правил. "
+                        f"Следующее правило добавить не удалось: {e}"
+                    ) from e
+                raise
+        return added
 
     async def vs_delete(self, entry_id: int, page: int = 1) -> None:
         await self._get("/userRpm/VirtualServerRpm.htm", {
@@ -439,16 +478,16 @@ class RouterClient:
 
     async def port_trigger_add(self, tr_port: str | int, incoming_ports: str,
                                tr_protocol: int = 1, in_protocol: int = 1,
-                               state: int = 1, page: int = 1) -> None:
+                               state: int = 1, page: int = 1) -> int:
         """Добавляет Port Triggering, повторяя штатный двухшаговый сценарий.
 
         Старая прошивка сначала формирует служебное состояние по ``Add=Add``,
         а затем ожидает его поля в запросе ``Save``. Пустые Changed/SelIndex
         способны оставить веб-интерфейс роутера в нерабочем состоянии.
         """
-        tr_port = normalize_port_expression(tr_port, allow_range=False)
-        incoming_ports = normalize_port_expression(
-            incoming_ports, allow_list=True, max_length=64,
+        trigger_port = expand_port_expression(tr_port, max_ports=1)[0]
+        incoming = expand_port_expression(
+            incoming_ports, allow_list=True, max_ports=64, max_length=64,
         )
         tr_protocol = int(tr_protocol)
         in_protocol = int(in_protocol)
@@ -459,6 +498,25 @@ class RouterClient:
         if state not in (0, 1):
             raise ValueError("неизвестное состояние правила")
 
+        added = 0
+        for incoming_port in incoming:
+            try:
+                await self._port_trigger_add_one(
+                    trigger_port, incoming_port, tr_protocol, in_protocol, state, page,
+                )
+                added += 1
+            except RouterError as e:
+                if added:
+                    raise RouterError(
+                        f"Добавлено {added} из {len(incoming)} правил. "
+                        f"Следующее правило добавить не удалось: {e}"
+                    ) from e
+                raise
+        return added
+
+    async def _port_trigger_add_one(self, tr_port: int, incoming_port: int,
+                                    tr_protocol: int, in_protocol: int,
+                                    state: int, page: int) -> None:
         add_html = await self._get(
             "/userRpm/SpecialAppRpm.htm", {"Add": "Add", "Page": page},
         )
@@ -485,7 +543,7 @@ class RouterClient:
         await self._get("/userRpm/SpecialAppRpm.htm", {
             "trPort": tr_port,
             "trProtocol": tr_protocol,
-            "inPort": incoming_ports,
+            "inPort": incoming_port,
             "inProtocol": in_protocol,
             "State": state,
             "Commonapp": 0,

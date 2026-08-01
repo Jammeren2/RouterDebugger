@@ -199,7 +199,7 @@ async def api_pf_add(request: Request, _: str = Depends(require_user),
     try:
         ext_port = normalize_port_expression(body["ext_port"])
         int_port = normalize_port_expression(body.get("int_port") or ext_port)
-        await r.vs_add(
+        added = await r.vs_add(
             ext_port=ext_port,
             int_port=int_port,
             ip=str(body["ip"]).strip(),
@@ -207,7 +207,7 @@ async def api_pf_add(request: Request, _: str = Depends(require_user),
             state=1 if body.get("enabled", True) else 0,
             page=max(1, int(body.get("page", 1))),
         )
-        return {"ok": True}
+        return {"ok": True, "added": added}
     except (KeyError, ValueError) as e:
         raise HTTPException(status_code=400, detail=f"Некорректные данные: {e}")
     except RouterError as e:
@@ -409,7 +409,7 @@ async def api_page_list(page_id: str, op: str, request: Request, _: str = Depend
                 values["inPort"] = normalize_port_expression(
                     values.get("inPort", ""), allow_list=True, max_length=64,
                 )
-                await r.port_trigger_add(
+                added = await r.port_trigger_add(
                     tr_port=values["trPort"],
                     incoming_ports=values["inPort"],
                     tr_protocol=int(values.get("trProtocol", 1)),
@@ -425,7 +425,10 @@ async def api_page_list(page_id: str, op: str, request: Request, _: str = Depend
             await engine.list_do_all(r, spec, body.get("action", ""), page)
         else:
             raise HTTPException(status_code=400, detail="Неизвестная операция")
-        return {"ok": True}
+        result = {"ok": True}
+        if op == "add" and page_id == "SpecialAppRpm":
+            result["added"] = added
+        return result
     except (KeyError, ValueError) as e:
         raise HTTPException(status_code=400, detail=f"Некорректные данные: {e}")
     except RouterError as e:
